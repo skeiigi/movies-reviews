@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Фильмы</title>
+    <style>
+        table {
+            width: 50%;
+            border-collapse: collapse;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid #333;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+<h1 style="text-align: center;">Фильмы</h1>
+{% if movie %}
+    <table>
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Постер</th>
+                <th>Описание</th>
+            </tr>
+        </thead>
+        <tbody>
+<!--            <tr>-->
+<!--                <td>Элемент 1</td>-->
+<!--                <td>Элемент 1</td>-->
+<!--                <td>Элемент 1</td>-->
+<!--            </tr>-->
+<!--            <tr>-->
+<!--                <td>Элемент 2</td>-->
+<!--                <td>Элемент 2</td>-->
+<!--                <td>Элемент 2</td>-->
+<!--            </tr>-->
+<!--            <tr>-->
+<!--                <td>Элемент 3</td>-->
+<!--                <td>Элемент 3</td>-->
+<!--                <td>Элемент 3</td>-->
+<!--            </tr>-->
+
+
+                {% for mo in movie %}
+                    <tr>
+                        <td>{{ mo.title }}</td>
+                        <td><img src="{{ mo.poster.url }}" alt="{{ mo.title }}"></td>
+                        <td>{{ mo.about }}</td>
+                    </tr>
+                {% endfor %}
+                    <tr>
+                        <td>{{ mo.title }}</td>
+                        <td><img src="{{ mo.poster.url }}" alt="{{ mo.title }}"></td>
+                        <td>{{ mo.about }}</td>
+                    </tr>
+            {% else %}
+                <h4>Фильмов нет...</h4>
+            {% endif %}
+        </tbody>
+    </table>
+</body>
+</html>
