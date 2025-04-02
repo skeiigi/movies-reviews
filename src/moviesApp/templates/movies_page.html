@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Фильмы</title>
@@ -21,7 +21,7 @@
 </head>
 <body>
 <h1 style="text-align: center;">Фильмы</h1>
-{% if movie %}
+{% if movies %}
     <table>
         <thead>
             <tr>
@@ -31,39 +31,24 @@
             </tr>
         </thead>
         <tbody>
-<!--            <tr>-->
-<!--                <td>Элемент 1</td>-->
-<!--                <td>Элемент 1</td>-->
-<!--                <td>Элемент 1</td>-->
-<!--            </tr>-->
-<!--            <tr>-->
-<!--                <td>Элемент 2</td>-->
-<!--                <td>Элемент 2</td>-->
-<!--                <td>Элемент 2</td>-->
-<!--            </tr>-->
-<!--            <tr>-->
-<!--                <td>Элемент 3</td>-->
-<!--                <td>Элемент 3</td>-->
-<!--                <td>Элемент 3</td>-->
-<!--            </tr>-->
-
-
-                {% for mo in movie %}
+                {% for mo in movies %}
                     <tr>
                         <td>{{ mo.title }}</td>
                         <td><img src="{{ mo.poster.url }}" alt="{{ mo.title }}"></td>
                         <td>{{ mo.about }}</td>
                     </tr>
                 {% endfor %}
-                    <tr>
-                        <td>{{ mo.title }}</td>
-                        <td><img src="{{ mo.poster.url }}" alt="{{ mo.title }}"></td>
-                        <td>{{ mo.about }}</td>
-                    </tr>
+        </tbody>
+    </table>
             {% else %}
                 <h4>Фильмов нет...</h4>
             {% endif %}
-        </tbody>
-    </table>
+
+<h1 style="text-align: center;">Добавление фильма</h1>
+<form method="post" enctype="multipart/form-data" style="text-align: center;">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Сохранить</button>
+</form>
 </body>
 </html>
