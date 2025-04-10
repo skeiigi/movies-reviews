@@ -8,7 +8,8 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name="home"),
-    path('movies/', views.movies, name="movies")
+    path('movies/', views.movies, name="movies"),
+    path('reviews/', views.reviews, name="reviews"),
 ]
 
 if settings.DEBUG:

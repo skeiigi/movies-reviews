@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Обсуждения</title>
+    <style>
+        table {
+            width: 50%;
+            border-collapse: collapse;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid #333;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+
+<a href="{% url 'home' %}">Назад</a>
+
+{% if reviews %}
+<table>
+  <thead>
+    <tr>
+      <th>Тема</th>
+      <th>Фильм</th>
+      <th>Контент</th>
+    </tr>
+  </thead>
+  <tbody>
+
+{% for rv in reviews %}
+    <tr>
+        <th>{{rv.title}}</th>
+        <th>{{rv.movie}}</th>
+        <th>{{rv.content}}</th>
+    </tr>
+{% endfor %}
+
+  </tbody>
+</table>
+
+{% else %}
+<h1>Пока нет обсуждений...</h1>
+{% endif %}
+<div style="text-align: center;">
+<h1>Добавить новое обсуждение</h1>
+<form method="post">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit">Сохранить</button>
+</form>
+</div>
+</body>
+</html>

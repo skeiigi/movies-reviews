@@ -1,7 +1,7 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
-from .models import Movies
-from .forms import MovieForm
+from .models import Movies, Reviews
+from .forms import MovieForm, ReviewForm
 
 
 def index(request):
@@ -25,3 +25,16 @@ def movies(request):
 
     # Передаем форму и список фильмов в контекст
     return render(request, "movies_page.html", {'form': form, 'movies': movies_list})
+
+
+def reviews(request):
+    if request.method == "POST":
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('reviews')
+    else:
+        form = ReviewForm()
+    mvs = Movies.objects.all()
+    rvws = Reviews.objects.all()
+    return render(request, 'reviews.html', {'reviews': rvws, 'form': form, 'movies': mvs})
