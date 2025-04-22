@@ -16,6 +16,7 @@ class Reviews(models.Model):
     movie = models.ForeignKey(Movies, on_delete=models.SET_NULL, null=True, blank=True)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True, null=False)
+    # user_id = models.IntegerField()
 
     def __str__(self):
         return self.title

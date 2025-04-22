@@ -21,7 +21,12 @@
 </head>
 <body>
 
-<a href="{% url 'home' %}">Назад</a>
+{% if user.is_authenticated %}
+    <a href="{% url 'profile' %}">Назад</a>
+    <p>Имя {{ user.username}}</p>
+{% else %}
+    <a href="{% url 'home' %}">Назад</a>
+{% endif %}
 
 <h1 style="text-align: center;">Фильмы</h1>
 {% if movies %}
@@ -47,11 +52,15 @@
                 <h4>Фильмов нет...</h4>
             {% endif %}
 
+{% if user.is_authenticated %}
 <h1 style="text-align: center;">Добавление фильма</h1>
 <form method="post" enctype="multipart/form-data" style="text-align: center;">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Сохранить</button>
 </form>
+{% else %}
+    <h3 style="text-align: center;"><a href="{% url 'login' %}">Авторизуйтесь</a>, чтобы добавить фильм</h3>
+{% endif %}
 </body>
 </html>
