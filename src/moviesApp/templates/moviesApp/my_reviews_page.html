@@ -1,71 +1,10 @@
 <!DOCTYPE html>
-{% load static %}
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Мои статьи</title>
+    {% load static %}
     <link rel="stylesheet" href="{% static 'moviesApp/css/styles.css' %}">
-    <style>
-        table {
-            width: 50%;
-            border-collapse: collapse;
-            margin: 20px auto;
-        }
-        th, td {
-            border: 1px solid #333;
-            padding: 10px;
-            text-align: center;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-
-        .modal {
-        position: fixed;
-        inset: 0;
-        background-color: rgba(0, 0, 0, 0.5);
-        cursor: pointer;
-        display: none;
-        }
-
-        .modal__main {
-            position: relative;
-            max-width: 600px;
-            background-color: azure;
-            margin: auto;
-            color: #000;
-            border-radius: 16px;
-            padding: 30px;
-            cursor: default;
-        }
-
-        .modal__title {
-            margin-bottom: 30px;
-        }
-
-        .modal__close {
-            background-color: transparent;
-            border: none;
-            cursor: pointer;
-            font-size: 22px;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            outline: 1px solid transparent;
-            outline-offset: 3px;
-            transition: outline-color 15s ease-in-out;
-            border-radius: 3px;
-            padding: 0;
-            text-align: center;
-            display: block;
-            width: 30px;
-            height: 30px;
-        }
-
-        .modal__close:focus-visible {
-            outline-color: green;
-        }
-    </style>
 </head>
 <body>
 <h1>Статьи {{ user.username }}</h1>
