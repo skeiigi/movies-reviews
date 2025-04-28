@@ -15,6 +15,7 @@
 <br>
 <a>Нет аккаунта? </a><a href="{% url 'register' %}">Зарегистрируйтесь</a>
 
+{% comment %}
 {% if messages %}
     <ul>
         {% for message in messages %}
@@ -22,5 +23,6 @@
         {% endfor %}
     </ul>
     {% endif %}
+{% endcomment %}
 </body>
 </html>

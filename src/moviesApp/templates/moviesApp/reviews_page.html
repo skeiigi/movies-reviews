@@ -24,14 +24,17 @@
 {% if user.is_authenticated %}
     <a href="{% url 'profile' %}">Назад</a>
     <p>Имя {{ user.username}}</p>
+    <a href="{% url 'my_reviews' %}">Мои обсуждения</a>
 {% else %}
     <a href="{% url 'home' %}">Назад</a>
 {% endif %}
+
 
 {% if reviews %}
 <table>
   <thead>
     <tr>
+      <th>Автор</th>
       <th>Тема</th>
       <th>Фильм</th>
       <th>Контент</th>
@@ -41,9 +44,25 @@
 
 {% for rv in reviews %}
     <tr>
-        <th>{{rv.title}}</th>
-        <th>{{rv.movie}}</th>
-        <th>{{rv.content}}</th>
+        <td>{{ rv.user.username|default:"DELETED" }}</td>
+        <td>{{rv.title}}</td>
+        <td>
+        {% if rv.movie %}
+          {% if rv.movie.poster %}
+              <div style="display: flex; align-items: center;">
+                <img src="{{ rv.movie.poster.url }}" alt="{{ rv.movie.title }}" style="width: 100px; height: auto; margin-right: 10px;">
+                <span>{{ rv.movie.title }}</span>
+              </div>
+          {% else %}
+            <span>(Постер к фильму не найден)</span>
+          {% endif %}
+
+
+        {% else %}
+          <span>(Фильм не указан)</span>
+        {% endif %}
+      </td>
+        <td>{{rv.content}}</td>
     </tr>
 {% endfor %}
 

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from datetime import datetime
 
@@ -13,10 +14,20 @@ class Movies(models.Model):
 
 class Reviews(models.Model):
     title = models.CharField(max_length=65)
-    movie = models.ForeignKey(Movies, on_delete=models.SET_NULL, null=True, blank=True)
+    movie = models.ForeignKey(
+        Movies,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True, null=False)
-    # user_id = models.IntegerField()
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        blank=False,
+        null=True
+    )
 
     def __str__(self):
         return self.title

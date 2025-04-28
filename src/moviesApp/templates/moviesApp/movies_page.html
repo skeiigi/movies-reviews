@@ -1,8 +1,10 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Фильмы</title>
+    <link rel="stylesheet" href="{% static 'moviesApp/css/styles.css' %}">
     <style>
         table {
             width: 50%;
@@ -17,6 +19,8 @@
         th {
             background-color: #f4f4f4;
         }
+
+
     </style>
 </head>
 <body>
@@ -42,7 +46,13 @@
                 {% for mo in movies %}
                     <tr>
                         <td>{{ mo.title }}</td>
-                        <td><img src="{{ mo.poster.url }}" alt="{{ mo.title }}"></td>
+                        <td>
+                          {% if mo.poster %}
+                            <img src="{{ mo.poster.url }}" alt="{{ mo.title }}">
+                          {% else %}
+                            <span>(Постер к фильму не найден)</span>
+                          {% endif %}
+                        </td>
                         <td>{{ mo.about }}</td>
                     </tr>
                 {% endfor %}

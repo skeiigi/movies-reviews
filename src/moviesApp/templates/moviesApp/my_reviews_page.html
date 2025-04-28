@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Мои статьи</title>
+    <link rel="stylesheet" href="{% static 'moviesApp/css/styles.css' %}">
+    <style>
+        table {
+            width: 50%;
+            border-collapse: collapse;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid #333;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+
+        .modal {
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        cursor: pointer;
+        display: none;
+        }
+
+        .modal__main {
+            position: relative;
+            max-width: 600px;
+            background-color: azure;
+            margin: auto;
+            color: #000;
+            border-radius: 16px;
+            padding: 30px;
+            cursor: default;
+        }
+
+        .modal__title {
+            margin-bottom: 30px;
+        }
+
+        .modal__close {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 22px;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            outline: 1px solid transparent;
+            outline-offset: 3px;
+            transition: outline-color 15s ease-in-out;
+            border-radius: 3px;
+            padding: 0;
+            text-align: center;
+            display: block;
+            width: 30px;
+            height: 30px;
+        }
+
+        .modal__close:focus-visible {
+            outline-color: green;
+        }
+    </style>
+</head>
+<body>
+<h1>Статьи {{ user.username }}</h1>
+<a href="{% url 'reviews' %}">Все обсуждения</a>
+
+{% if reviews %}
+<table>
+  <thead>
+    <tr>
+      <th>Тема</th>
+      <th>Фильм</th>
+      <th>Контент</th>
+    </tr>
+  </thead>
+  <tbody>
+
+{% for rv in reviews %}
+    <tr>
+        <td>{{rv.title}}</td>
+        <td>
+        {% if rv.movie %}
+          {% if rv.movie.poster %}
+              <div style="display: flex; align-items: center;">
+                <img src="{{ rv.movie.poster.url }}" alt="{{ rv.movie.title }}" style="width: 100px; height: auto; margin-right: 10px;">
+                <span>{{ rv.movie.title }}</span>
+              </div>
+          {% else %}
+            <span>(Постер к фильму не найден)</span>
+          {% endif %}
+
+
+        {% else %}
+          <span>(Фильм не указан)</span>
+        {% endif %}
+      </td>
+      <td>{{rv.content}}</td>
+      <td><button type="submit" class="section__button">Изменить</button></td>
+    </tr>
+{% endfor %}
+
+  </tbody>
+</table>
+
+{% else %}
+<h1>Пока нет обсуждений...</h1>
+{% endif %}
+
+<div class="modal">
+    <div class="modal__main">
+        <h2 class="modal__title">Модальное окно</h2>
+        <div class="modal__container">
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores ipsa totam vero?</p>
+        </div>
+        <button class="modal__close">&#10006;</button>
+    </div>
+</div>
+
+<script>
+    const buttonElem = document.querySelector('.section__button');
+    const modalElem = document.querySelector('.modal');
+
+    modalElem.style.cssText = `
+        display: flex;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 300ms ease-on-out;
+    `;
+
+    const closeModal = () => {
+        const target = event.target;
+
+        if (target === modalElem || target.closest('.modal__close')) {
+            modalElem.style.visibility = 'hidden';
+            modalElem.style.opacity = 0;
+        }
+    }
+
+    const openModal = () => {
+        modalElem.style.visibility = 'visible';
+        modalElem.style.opacity = 1;
+    }
+
+    buttonElem.addEventListener('click', openModal);
+    modalElem.addEventListener('click', closeModal);
+</script>
+</body>
+</html>

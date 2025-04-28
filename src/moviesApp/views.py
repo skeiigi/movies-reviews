@@ -9,7 +9,7 @@ from .forms import MovieForm, ReviewForm, LoginForm, RegisterForm
 
 
 def index(request):
-    return render(request, "index.html")
+    return render(request, "moviesApp/index.html")
 
 
 def auth_login(request):
@@ -26,7 +26,6 @@ def auth_login(request):
             if user is not None:
                 # Если пользователь найден, выполняем вход
                 login(request, user)
-                messages.success(request, f"Добро пожаловать, {username}!")
                 return redirect('profile')  # Перенаправляем на главную страницу или другую страницу
             else:
                 # Если пользователь не найден, выводим сообщение об ошибке
@@ -37,7 +36,7 @@ def auth_login(request):
     else:
         form = LoginForm()  # Создаем пустую форму для GET-запроса
 
-    return render(request, 'login.html', {'form': form})
+    return render(request, 'moviesApp/login.html', {'form': form})
 
 
 def auth_register(request):
@@ -49,14 +48,13 @@ def auth_register(request):
             return redirect("profile")
     else:
         form = RegisterForm()
-    return render(request, "register.html", {"form": form})
+    return render(request, "moviesApp/register.html", {"form": form})
 
 
 def auth_logout(request):
     if request.method == 'POST':
         if request.user.is_authenticated:
             logout(request)
-            messages.success(request, "Вы успешно вышли из системы.")
         return redirect('home')  # Перенаправляем на главную страницу
     else:
         # Если это не POST-запрос, просто перенаправляем на главную страницу
@@ -66,7 +64,7 @@ def auth_logout(request):
 @login_required(login_url='/login/')
 def profile(request):
     user = get_object_or_404(User, username=request.user)
-    return render(request, "profile.html", {"user": user})
+    return render(request, "moviesApp/profile.html", {"user": user})
 
 
 def movies(request):
@@ -84,28 +82,38 @@ def movies(request):
         if form.is_valid():
             # Если форма валидна, сохраняем данные и перенаправляем на страницу
             form.save()
-            return render(request, "movies_page.html", {'form': form, 'movies': movies_list})
+            return render(request, "moviesApp/movies_page.html", {'form': form, 'movies': movies_list})
     else:
         # Если запрос GET, создаем пустую форму
         form = MovieForm()
 
     # Передаем форму и список фильмов в контекст
-    return render(request, "movies_page.html", {'form': form, 'movies': movies_list, 'user': user})
+    return render(request, "moviesApp/movies_page.html", {'form': form, 'movies': movies_list, 'user': user})
 
 
 def reviews(request):
     if request.user.is_authenticated:
-        user = get_object_or_404(User, username=request.user)
+        user = request.user if request.user.is_authenticated else None
     else:
         user = None
 
     if request.method == "POST":
         form = ReviewForm(request.POST)
         if form.is_valid():
-            form.save()
+            review = form.save(commit=False)
+            review.user =request.user
+            review.save()
             return redirect('reviews')
     else:
         form = ReviewForm()
     mvs = Movies.objects.all()
-    rvws = Reviews.objects.all()
-    return render(request, 'reviews_page.html', {'reviews': rvws, 'form': form, 'movies': mvs, "user": user})
+    rvws = Reviews.objects.select_related('user', 'movie').all()
+    return render(request, 'moviesApp/reviews_page.html', {'reviews': rvws, 'form': form, 'movies': mvs, "user": user})
+
+
+@login_required(login_url='/login/')
+def my_reviews(request):
+    mvs = Movies.objects.all()
+    rvws = Reviews.objects.filter(user=request.user).select_related('movie')
+    user = request.user
+    return render(request, 'moviesApp/my_reviews_page.html', {'reviews': rvws, 'movies': mvs, 'user': user})
