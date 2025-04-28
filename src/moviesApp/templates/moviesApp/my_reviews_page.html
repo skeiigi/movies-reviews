@@ -63,31 +63,44 @@
 </div>
 
 <script>
-    const buttonElem = document.querySelector('.section__button');
+    // Выбираем все кнопки с классом section__button
+    const buttonElems = document.querySelectorAll('.section__button');
     const modalElem = document.querySelector('.modal');
 
+    // Настройка стилей модального окна
     modalElem.style.cssText = `
-        display: flex;
-        visibility: hidden;
-        opacity: 0;
-        transition: opacity 300ms ease-on-out;
-    `;
+    display: flex;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 300ms ease-in-out;
+`;
 
-    const closeModal = () => {
+    // Функция закрытия модального окна
+    const closeModal = (event) => {
         const target = event.target;
 
         if (target === modalElem || target.closest('.modal__close')) {
-            modalElem.style.visibility = 'hidden';
+            
             modalElem.style.opacity = 0;
-        }
-    }
 
+            setTimeout(() => {
+                modalElem.style.visibility = 'hidden';
+            }, 300)
+        }
+    };
+
+    // Функция открытия модального окна
     const openModal = () => {
         modalElem.style.visibility = 'visible';
         modalElem.style.opacity = 1;
-    }
+    };
 
-    buttonElem.addEventListener('click', openModal);
+    // Добавляем обработчик события на каждую кнопку
+    buttonElems.forEach(button => {
+        button.addEventListener('click', openModal);
+    });
+
+    // Добавляем обработчик события на модальное окно для закрытия
     modalElem.addEventListener('click', closeModal);
 </script>
 </body>
