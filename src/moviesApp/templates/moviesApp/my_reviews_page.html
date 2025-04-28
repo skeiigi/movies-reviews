@@ -56,7 +56,7 @@
     <div class="modal__main">
         <h2 class="modal__title">Модальное окно</h2>
         <div class="modal__container">
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores ipsa totam vero?</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Esse fuga iure quo veniam. Architecto, dolorum.</p>
         </div>
         <button class="modal__close">&#10006;</button>
     </div>
@@ -79,8 +79,8 @@
     const closeModal = (event) => {
         const target = event.target;
 
-        if (target === modalElem || target.closest('.modal__close')) {
-            
+        if (target.closest('.modal__close')) {
+
             modalElem.style.opacity = 0;
 
             setTimeout(() => {
