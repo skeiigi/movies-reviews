@@ -91,17 +91,21 @@ def movies(request):
     return render(request, "moviesApp/movies_page.html", {'form': form, 'movies': movies_list, 'user': user})
 
 
+@login_required(login_url='/login/')
+def delete_movie(request, movie_id):
+    movie = get_object_or_404(Movies, id=movie_id)
+    movie.delete()
+    return redirect("movies")
+
+
 def reviews(request):
-    if request.user.is_authenticated:
-        user = request.user if request.user.is_authenticated else None
-    else:
-        user = None
+    user = request.user if request.user.is_authenticated else None
 
     if request.method == "POST":
         form = ReviewForm(request.POST)
         if form.is_valid():
             review = form.save(commit=False)
-            review.user =request.user
+            review.user = request.user
             review.save()
             return redirect('reviews')
     else:
@@ -116,4 +120,22 @@ def my_reviews(request):
     mvs = Movies.objects.all()
     rvws = Reviews.objects.filter(user=request.user).select_related('movie')
     user = request.user
-    return render(request, 'moviesApp/my_reviews_page.html', {'reviews': rvws, 'movies': mvs, 'user': user})
+
+    if request.method == "POST":
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.user = request.user
+            review.save()
+            return redirect('my_reviews')
+    else:
+        form = ReviewForm()
+
+    return render(request, 'moviesApp/my_reviews_page.html', {'reviews': rvws, 'movies': mvs, 'user': user, 'form': form})
+
+
+@login_required(login_url='/login/')
+def delete_review(request, review_id):
+    review = get_object_or_404(Reviews, id=review_id)
+    review.delete()
+    return redirect("my_reviews")
