@@ -37,6 +37,14 @@
                           {% endif %}
                         </td>
                         <td>{{ mo.about }}</td>
+                        <td><form method="post" action="{% url 'delete_movie' mo.id %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger"
+                                        onclick="return confirm('Вы уверены, что хотите удалить статью {{ mo.title }}?');">
+                                    Удалить
+                                </button>
+                            </form>
+                        </td>
                     </tr>
                 {% endfor %}
         </tbody>

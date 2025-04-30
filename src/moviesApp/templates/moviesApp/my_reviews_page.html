@@ -34,14 +34,28 @@
           {% else %}
             <span>(Постер к фильму не найден)</span>
           {% endif %}
-
-
         {% else %}
           <span>(Фильм не указан)</span>
         {% endif %}
       </td>
       <td>{{rv.content}}</td>
-      <td><button type="submit" class="section__button">Изменить</button></td>
+      <td><button type="submit"
+                  class="edit__button"
+                  data-id="{{ rv.id }}"
+                  data-title="{{ rv.title }}"
+                  data-movie="{{ rv.movie }}"
+                  data-content="{{ rv.content }}">
+          Изменить</button>
+      </td>
+      <td>
+          <form method="post" action="{% url 'delete_review' rv.id %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger"
+                    onclick="return confirm('Вы уверены, что хотите удалить статью {{ rv.title }}?');">
+                Удалить
+            </button>
+          </form>
+      </td>
     </tr>
 {% endfor %}
 
@@ -54,17 +68,22 @@
 
 <div class="modal">
     <div class="modal__main">
-        <h2 class="modal__title">Модальное окно</h2>
+        <h2 class="modal__title">Редактирование статьи</h2>
         <div class="modal__container">
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Esse fuga iure quo veniam. Architecto, dolorum.</p>
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Сохранить</button>
+            </form>
+
         </div>
         <button class="modal__close">&#10006;</button>
     </div>
 </div>
 
 <script>
-    // Выбираем все кнопки с классом section__button
-    const buttonElems = document.querySelectorAll('.section__button');
+    // Выбираем все кнопки с классом edit__button
+    const buttonElems = document.querySelectorAll('.edit__button');
     const modalElem = document.querySelector('.modal');
 
     // Настройка стилей модального окна

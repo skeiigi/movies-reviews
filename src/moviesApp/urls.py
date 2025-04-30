@@ -15,6 +15,8 @@ urlpatterns = [
     path('register/', views.auth_register, name="register"),
     path('logout/', views.auth_logout, name='logout'),
     path('my_reviews/', views.my_reviews, name='my_reviews'),
+    path("movies/delete/<int:movie_id>/", views.delete_movie, name="delete_movie"),
+    path("my_reviews/delete/<int:review_id>/", views.delete_review, name="delete_review"),
 ]
 
 if settings.DEBUG:
