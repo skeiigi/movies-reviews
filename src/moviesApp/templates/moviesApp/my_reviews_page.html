@@ -16,6 +16,8 @@
     <tr>
       <th>Тема</th>
       <th>Фильм</th>
+      <th>Дата написания</th>
+      <th>Последнее изменение</th>
       <th>Контент</th>
     </tr>
   </thead>
@@ -38,6 +40,8 @@
           <span>(Фильм не указан)</span>
         {% endif %}
       </td>
+      <td>{{rv.created_at}}</td>
+      <td>{{rv.changed_at}}</td>
       <td>{{rv.content}}</td>
       <td><button type="submit"
                   class="edit__button"
