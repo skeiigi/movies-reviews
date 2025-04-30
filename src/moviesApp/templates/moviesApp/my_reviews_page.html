@@ -43,12 +43,8 @@
       <td>{{rv.created_at}}</td>
       <td>{{rv.changed_at}}</td>
       <td>{{rv.content}}</td>
-      <td><button type="submit"
-                  class="edit__button"
-                  data-id="{{ rv.id }}"
-                  data-title="{{ rv.title }}"
-                  data-movie="{{ rv.movie }}"
-                  data-content="{{ rv.content }}">
+      <td><button class="edit__button"
+                  data-id="{{ rv.id }}">
           Изменить</button>
       </td>
       <td>
@@ -74,57 +70,88 @@
     <div class="modal__main">
         <h2 class="modal__title">Редактирование статьи</h2>
         <div class="modal__container">
-            <form method="POST">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit">Сохранить</button>
-            </form>
-
+<!--            <form method="POST">-->
+<!--                {% csrf_token %}-->
+<!--                {{ form.as_p }}-->
+<!--                <button type="submit">Сохранить</button>-->
+<!--            </form>-->
         </div>
         <button class="modal__close">&#10006;</button>
     </div>
 </div>
 
 <script>
-    // Выбираем все кнопки с классом edit__button
+    // Выбираем все кнопки "Изменить"
     const buttonElems = document.querySelectorAll('.edit__button');
     const modalElem = document.querySelector('.modal');
+    const modalContainer = modalElem.querySelector('.modal__container');
 
-    // Настройка стилей модального окна
+    // Изначально скрываем модальное окно
     modalElem.style.cssText = `
-    display: flex;
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity 300ms ease-in-out;
-`;
+        display: flex;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 300ms ease-in-out;
+    `;
 
-    // Функция закрытия модального окна
+    // Закрытие модального окна
     const closeModal = (event) => {
         const target = event.target;
-
         if (target.closest('.modal__close')) {
-
             modalElem.style.opacity = 0;
-
             setTimeout(() => {
                 modalElem.style.visibility = 'hidden';
-            }, 300)
+                modalContainer.innerHTML = ''; // очищаем содержимое
+            }, 300);
         }
     };
 
-    // Функция открытия модального окна
-    const openModal = () => {
-        modalElem.style.visibility = 'visible';
-        modalElem.style.opacity = 1;
+    // Открытие и загрузка формы в модальное окно
+    const openModal = (reviewId) => {
+        fetch(`/review/edit/${reviewId}/`)
+            .then(response => response.text())
+            .then(html => {
+                modalContainer.innerHTML = `
+                    <form method="POST" id="edit-form">
+                        ${html}
+                        
+                    </form>
+                    <button class="modal__close">&#10006;</button>
+                `;
+                modalElem.style.visibility = 'visible';
+                modalElem.style.opacity = 1;
+
+                // Обработчик отправки формы
+                const editForm = document.querySelector('#edit-form');
+                editForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const formData = new FormData(editForm);
+
+                    fetch(`/review/edit/${reviewId}/`, {
+                        method: 'POST',
+                        body: formData
+                    }).then(res => {
+                        if (res.ok) {
+                            location.reload(); // Перезагружаем страницу после успешного редактирования
+                        } else {
+                            alert('Ошибка при сохранении данных.');
+                        }
+                    });
+                });
+            });
     };
 
-    // Добавляем обработчик события на каждую кнопку
+    // Навешиваем обработчик на каждую кнопку
     buttonElems.forEach(button => {
-        button.addEventListener('click', openModal);
+        button.addEventListener('click', () => {
+            const reviewId = button.dataset.id;
+            openModal(reviewId);
+        });
     });
 
-    // Добавляем обработчик события на модальное окно для закрытия
+    // Закрытие по клику на кнопку закрытия
     modalElem.addEventListener('click', closeModal);
 </script>
+
 </body>
 </html>

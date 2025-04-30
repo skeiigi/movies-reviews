@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
+from django.template.loader import render_to_string
+
 from .models import Movies, Reviews
 from .forms import MovieForm, ReviewForm, LoginForm, RegisterForm
 
@@ -132,6 +134,22 @@ def my_reviews(request):
         form = ReviewForm()
 
     return render(request, 'moviesApp/my_reviews_page.html', {'reviews': rvws, 'movies': mvs, 'user': user, 'form': form})
+
+
+@login_required(login_url='/login/')
+def edit_review(request, review_id):
+    review = get_object_or_404(Reviews, id=review_id)
+
+    if request.method == 'POST':
+        form = ReviewForm(request.POST, instance=review)
+        if form.is_valid():
+            form.save()
+            return HttpResponse(status=204)  # Успешно, без контента
+    else:
+        form = ReviewForm(instance=review)
+
+    html = render_to_string('moviesApp/edit_review_form.html', {'form': form}, request=request)
+    return HttpResponse(html)
 
 
 @login_required(login_url='/login/')
