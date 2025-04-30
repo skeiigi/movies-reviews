@@ -38,8 +38,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'moviesApp'
+    'moviesApp',
+    'django_recaptcha',
 ]
+
+RECAPTCHA_PUBLIC_KEY = '6LcbBikrAAAAADz0aj-dHQtCtNa6CzjFkDtxjYM5'
+RECAPTCHA_PRIVATE_KEY = '6LcbBikrAAAAACJGksQuEVUVnTevahKl-hNPsbo7'
+
+RECAPTCHA_SIZE = "normal"        # "normal" или "compact"
+RECAPTCHA_THEME = "light"        # "light" или "dark"
+RECAPTCHA_LANGUAGE = 'ru'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

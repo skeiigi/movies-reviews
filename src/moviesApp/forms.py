@@ -1,16 +1,34 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
+from django_recaptcha.widgets import ReCaptchaV2Checkbox
+from django_recaptcha.fields import ReCaptchaField
 
 from .models import Movies, Reviews
 
 
 class LoginForm(AuthenticationForm):
+    captcha = ReCaptchaField(
+        widget=ReCaptchaV2Checkbox(attrs={
+            'data-theme': 'light',  # Опционально: светлая/темная тема
+        }),
+        error_messages={
+            'required': 'Пожалуйста, подтвердите, что вы не робот'
+        }
+    )
     username = forms.CharField(label="Имя пользователя", max_length=150)
     password = forms.CharField(label="Пароль", widget=forms.PasswordInput)
 
 
 class RegisterForm(UserCreationForm):
+    captcha = ReCaptchaField(
+        widget=ReCaptchaV2Checkbox(attrs={
+            'data-theme': 'light',  # Опционально: светлая/темная тема
+        }),
+        error_messages={
+            'required': 'Пожалуйста, подтвердите, что вы не робот'
+        }
+    )
     class Meta:
         model = User
         fields = ["username", "email", "password1", "password2"]
