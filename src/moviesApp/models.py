@@ -7,6 +7,7 @@ class Movies(models.Model):
     title = models.CharField(max_length=50)
     poster = models.ImageField(upload_to='images/', null=True, blank=True)
     about = models.TextField()
+    changed_at = models.DateTimeField(auto_now=True, null=True)
 
     def __str__(self):
         return self.title

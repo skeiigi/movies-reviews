@@ -1,6 +1,5 @@
-<form method="POST" id="edit-review-form">
+<form method="POST" id="edit-movie-form">
   {% csrf_token %}
-  {{ form.id }}
   {{ form.as_p }}
   <button type="submit">Сохранить</button>
 </form>

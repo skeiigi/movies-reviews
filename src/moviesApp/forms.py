@@ -29,6 +29,7 @@ class RegisterForm(UserCreationForm):
             'required': 'Пожалуйста, подтвердите, что вы не робот'
         }
     )
+
     class Meta:
         model = User
         fields = ["username", "email", "password1", "password2"]
@@ -56,7 +57,7 @@ class RegisterForm(UserCreationForm):
 class MovieForm(forms.ModelForm):
     class Meta:
         model = Movies
-        fields = ['title', 'poster', 'about']
+        fields = ['id', 'title', 'poster', 'about']
 
         labels = {
             "title": "Название",
@@ -68,7 +69,7 @@ class MovieForm(forms.ModelForm):
 class ReviewForm(forms.ModelForm):
     class Meta:
         model = Reviews
-        fields = ['title', 'movie', 'content']
+        fields = ['id', 'title', 'movie', 'content']
 
         labels = {
             "title": "Название",

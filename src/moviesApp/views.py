@@ -94,6 +94,23 @@ def movies(request):
 
 
 @login_required(login_url='/login/')
+def edit_movie(request, movie_id):
+    movie = get_object_or_404(Movies, id=movie_id)
+
+    if request.method == 'POST':
+        form = MovieForm(request.POST, instance=movie)
+        if form.is_valid():
+            if form.has_changed():
+                form.save()
+                return HttpResponse(status=204)  # Успешно, без контента
+    else:
+        form = MovieForm(instance=movie)
+
+    html = render_to_string('moviesApp/edit_movie_form.html', {'form': form}, request=request)
+    return HttpResponse(html)
+
+
+@login_required(login_url='/login/')
 def delete_movie(request, movie_id):
     movie = get_object_or_404(Movies, id=movie_id)
     movie.delete()

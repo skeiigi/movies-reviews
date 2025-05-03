@@ -1,8 +1,21 @@
+table {
+    width: 70%;
+    border-collapse: collapse;
+    margin: 20px auto;
+}
+th, td {
+    border: 1px solid #333;
+    padding: 10px;
+    text-align: center;
+}
+th {
+    background-color: #f4f4f4;
+}
+
 .modal {
     position: fixed;
     inset: 0;
     background-color: rgba(0, 0, 0, 0.5);
-    cursor: pointer;
     display: none;
 }
 

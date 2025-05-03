@@ -23,6 +23,7 @@
                 <th>Название</th>
                 <th>Постер</th>
                 <th>Описание</th>
+                <th>Последнее изменение</th>
             </tr>
         </thead>
         <tbody>
@@ -37,10 +38,17 @@
                           {% endif %}
                         </td>
                         <td>{{ mo.about }}</td>
+                        <td>{{ mo.changed_at }}</td>
+                        <td>
+                            <button class="edit__button"
+                                    data-id="{{ mo.id }}">
+                                Изменить
+                            </button>
+                        </td>
                         <td><form method="post" action="{% url 'delete_movie' mo.id %}" style="display: inline;">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-danger"
-                                        onclick="return confirm('Вы уверены, что хотите удалить статью {{ mo.title }}?');">
+                                        onclick="return confirm('Вы уверены, что хотите удалить фильм {{ mo.title }}?');">
                                     Удалить
                                 </button>
                             </form>
@@ -63,5 +71,88 @@
 {% else %}
     <h3 style="text-align: center;"><a href="{% url 'login' %}">Авторизуйтесь</a>, чтобы добавить фильм</h3>
 {% endif %}
+
+
+<div class="modal">
+    <div class="modal__main">
+        <h2 class="modal__title">Редактирование фильма</h2>
+        <div class="modal__container"></div>
+        <button class="modal__close">&#10006;</button>
+    </div>
+</div>
+
+
+<script>
+    // Выбираем все кнопки "Изменить"
+    const buttonElems = document.querySelectorAll('.edit__button');
+    const modalElem = document.querySelector('.modal');
+    const modalContainer = modalElem.querySelector('.modal__container');
+
+    // Изначально скрываем модальное окно
+    modalElem.style.cssText = `
+        display: flex;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 300ms ease-in-out;
+    `;
+
+    // Закрытие модального окна
+    const closeModal = (event) => {
+        const target = event.target;
+        if (target.closest('.modal__close')) {
+            modalElem.style.opacity = 0;
+            setTimeout(() => {
+                modalElem.style.visibility = 'hidden';
+                modalContainer.innerHTML = ''; // очищаем содержимое
+            }, 300);
+        }
+    };
+
+    // Открытие и загрузка формы в модальное окно
+    const openModal = (movieId) => {
+        fetch(`/movie/edit/${movieId}/`)
+            .then(response => response.text())
+            .then(html => {
+                modalContainer.innerHTML = `
+                    <form method="POST" id="edit-movie-form">
+                        ${html}
+
+                    </form>
+                    <button class="modal__close">&#10006;</button>
+                `;
+                modalElem.style.visibility = 'visible';
+                modalElem.style.opacity = 1;
+
+                // Обработчик отправки формы
+                const editForm = document.querySelector('#edit-movie-form');
+                editForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const formData = new FormData(editForm);
+
+                    fetch(`/movie/edit/${movieId}/`, {
+                        method: 'POST',
+                        body: formData
+                    }).then(res => {
+                        if (res.ok) {
+                            location.reload(); // Перезагружаем страницу после успешного редактирования
+                        } else {
+                            alert('Ошибка при сохранении данных.');
+                        }
+                    });
+                });
+            });
+    };
+
+    // Навешиваем обработчик на каждую кнопку
+    buttonElems.forEach(button => {
+        button.addEventListener('click', () => {
+            const movieId = button.dataset.id;
+            openModal(movieId);
+        });
+    });
+
+    // Закрытие по клику на кнопку закрытия
+    modalElem.addEventListener('click', closeModal);
+</script>
 </body>
 </html>
