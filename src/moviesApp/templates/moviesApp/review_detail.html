@@ -1,0 +1,44 @@
+{% extends 'moviesApp/index.html' %}
+
+{% block content %}
+<div class="container">
+  <a href="{% url 'reviews' %}">← Назад к обсуждениям</a>
+
+  <h2>{{ review.title }}</h2>
+  <p><em>Фильм:</em> {{ review.movie.title|default:"(не указан)" }}</p>
+  <p>{{ review.content }}</p>
+  <hr>
+
+  <h4>Комментарии</h4>
+
+  {% for comment in comments %}
+    <div style="margin-bottom: 1rem; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+      <strong>{{ comment.user.username }}</strong>: {{ comment.content }}
+
+      <!-- Ответы -->
+      {% for reply in comment.replies.all %}
+        <div style="margin-left: 20px; margin-top: 5px; padding: 8px; background: #f9f9f9; border-radius: 5px;">
+          <strong>{{ reply.user.username }}</strong>: {{ reply.content }}
+        </div>
+      {% endfor %}
+
+      <!-- Форма ответа -->
+      <form method="post" action="{% url 'reply_comment' review.id comment.id %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Ответить</button>
+      </form>
+    </div>
+  {% empty %}
+    <p>Комментариев пока нет.</p>
+  {% endfor %}
+
+  <hr>
+  <h5>Оставить комментарий:</h5>
+  <form method="post" action="{% url 'add_comment' review.id %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Добавить комментарий</button>
+  </form>
+</div>
+{% endblock %}

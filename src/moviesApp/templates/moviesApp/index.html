@@ -2,12 +2,14 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Хом пейдж</title>
+    <title>{% block title %}Хом пейдж{% endblock %}</title>
 </head>
 <body>
 <h1>Hello</h1>
 <a href="{% url 'profile' %}">Профиль</a><br><br>
 <a href="{% url 'movies' %}">Фильмы</a><br><br>
 <a href="{% url 'reviews' %}">Обсуждения</a>
+{% block content %}
+{% endblock %}
 </body>
 </html>

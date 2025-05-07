@@ -6,8 +6,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 
-from .models import Movies, Reviews
-from .forms import MovieForm, ReviewForm, LoginForm, RegisterForm
+from .models import Movies, Reviews, Comment, Notification
+from .forms import MovieForm, ReviewForm, LoginForm, RegisterForm, CommentForm
 
 
 def index(request):
@@ -71,7 +71,7 @@ def profile(request):
 
 def movies(request):
     # Получаем все фильмы из базы данных
-    movies_list = Movies.objects.all
+    movies_list = Movies.objects.all()
 
     if request.user.is_authenticated:
         user = get_object_or_404(User, username=request.user)
@@ -175,3 +175,42 @@ def delete_review(request, review_id):
     review = get_object_or_404(Reviews, id=review_id)
     review.delete()
     return redirect("my_reviews")
+
+
+#Комментарии
+def review_detail(request, review_id):
+    print("💬 Вызвана review_detail()")  # Добавим это
+    review = get_object_or_404(Reviews, id=review_id)
+    comments = Comment.objects.filter(review=review, parent=None).select_related('user').prefetch_related('replies__user')
+    form = CommentForm()
+
+    return render(request, 'moviesApp/review_detail.html', {
+        'review': review,
+        'comments': comments,
+        'form': form,
+    })
+
+@login_required
+def add_comment(request, review_id, parent_id=None):
+    review = get_object_or_404(Reviews, id=review_id)
+    parent = None
+    if parent_id:
+        parent = get_object_or_404(Comment, id=parent_id)
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.review = review
+            comment.parent = parent
+            comment.save()
+
+            # Уведомление
+            if parent and parent.user != request.user:
+                Notification.objects.create(
+                    recipient=parent.user,
+                    comment=comment
+                )
+
+    return redirect('review_detail', review_id=review.id)

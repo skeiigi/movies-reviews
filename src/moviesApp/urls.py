@@ -19,6 +19,9 @@ urlpatterns = [
     path('movies/', views.movies, name="movies"),
     path('movie/edit/<int:movie_id>/', views.edit_movie, name='edit_movie'),
     path("movie/delete/<int:movie_id>/", views.delete_movie, name="delete_movie"),
+    path('review/<int:review_id>/', views.review_detail, name='review_detail'),
+    path('review/<int:review_id>/comment/', views.add_comment, name='add_comment'),
+    path('review/<int:review_id>/reply/<int:parent_id>/', views.add_comment, name='reply_comment'),
 ]
 
 if settings.DEBUG:

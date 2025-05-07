@@ -27,6 +27,7 @@
       <th>Дата написания</th>
       <th>Последнее изменение</th>
       <th>Контент</th>
+      <th>Комментарии</th>
     </tr>
   </thead>
   <tbody>
@@ -54,6 +55,7 @@
       <td>{{ rv.created_at }}</td>
       <td>{{rv.changed_at}}</td>
       <td>{{rv.content}}</td>
+      <td><a href="{% url 'review_detail' rv.id %}">Перейти</a></td>
     </tr>
 {% endfor %}
 
