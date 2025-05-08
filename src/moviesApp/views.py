@@ -111,7 +111,7 @@ def edit_movie(request, movie_id):
     movie = get_object_or_404(Movies, id=movie_id)
 
     if request.method == 'POST':
-        form = MovieForm(request.POST, instance=movie)
+        form = MovieForm(request.POST, request.FILES, instance=movie)
         if form.is_valid():
             if form.has_changed():
                 form.save()

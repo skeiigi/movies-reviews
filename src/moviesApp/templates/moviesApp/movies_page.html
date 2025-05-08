@@ -24,6 +24,8 @@
                 <th>Постер</th>
                 <th>Описание</th>
                 <th>Последнее изменение</th>
+                <th>Продолжительность фильма</th>
+                <th>Страна производства</th>
             </tr>
         </thead>
         <tbody>
@@ -39,6 +41,8 @@
                         </td>
                         <td>{{ mo.about }}</td>
                         <td>{{ mo.changed_at }}</td>
+                        <td>{{ mo.get_duration }}</td>
+                        <td>{{ mo.country_release }}</td>
                         {% if user.is_authenticated %}
                         <td>
                             <button class="edit__button"

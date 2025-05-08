@@ -3,14 +3,26 @@ from django.db import models
 from datetime import datetime
 
 
+class Country(models.Model):
+    name = models.TextField(unique=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Movies(models.Model):
     title = models.CharField(max_length=50)
     poster = models.ImageField(upload_to='images/', null=True, blank=True)
     about = models.TextField()
+    duration_minutes = models.PositiveIntegerField(verbose_name="Продолжительность", null=True)
+    country_release = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True)
     changed_at = models.DateTimeField(auto_now=True, null=True)
 
-    def __str__(self):
-        return self.title
+    def get_duration(self):
+        hours = self.duration_minutes // 60
+        minutes = self.duration_minutes % 60
+
+        return f"{hours}ч {minutes}мин"
 
 
 class Reviews(models.Model):
@@ -37,9 +49,9 @@ class Reviews(models.Model):
 
 class Comment(models.Model):
     review = models.ForeignKey(Reviews, on_delete=models.CASCADE, related_name='comments')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
     content = models.TextField()
-    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL, related_name='replies')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

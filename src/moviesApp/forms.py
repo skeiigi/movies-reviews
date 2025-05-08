@@ -57,12 +57,14 @@ class RegisterForm(UserCreationForm):
 class MovieForm(forms.ModelForm):
     class Meta:
         model = Movies
-        fields = ['id', 'title', 'poster', 'about']
+        fields = ['id', 'title', 'poster', 'about', 'duration_minutes', 'country_release']
 
         labels = {
             "title": "Название",
             "poster": "Фото",
-            "about": "Описание"
+            "about": "Описание",
+            "duration_minutes": "Продолжительность (мин)",
+            "country_release": "Страна производства"
         }
 
 
@@ -76,6 +78,7 @@ class ReviewForm(forms.ModelForm):
             "movie": "Фильм",
             "content": "Текст"
         }
+
 
 class CommentForm(forms.ModelForm):
     class Meta:

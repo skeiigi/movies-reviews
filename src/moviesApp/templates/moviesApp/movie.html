@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>{{ movie.title }}</title>
@@ -9,5 +9,7 @@
 <h1>{{ movie.title }}</h1>
 <p>{{ movie.about }}</p>
 <img src="{{ movie.poster.url }}" alt="{{ movie.title }}">
+<p>Продолжительность фильма: {{ movie.get_duration }}</p>
+<p>Страна производства: {{ movie.country_release }}</p>
 </body>
 </html>
