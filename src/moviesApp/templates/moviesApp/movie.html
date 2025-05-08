@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ movie.title }}</title>
+</head>
+<body>
+<a href="{% url 'movies' %}">Назад к фильмам</a>
+<h1>{{ movie.title }}</h1>
+<p>{{ movie.about }}</p>
+<img src="{{ movie.poster.url }}" alt="{{ movie.title }}">
+</body>
+</html>

@@ -117,6 +117,11 @@ def delete_movie(request, movie_id):
     return redirect("movies")
 
 
+def movie_page(request, movie_id):
+    movie = get_object_or_404(Movies, id=movie_id)
+    return render(request, "moviesApp/movie.html", {"movie": movie})
+
+
 def reviews(request):
     user = request.user if request.user.is_authenticated else None
 

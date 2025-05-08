@@ -56,6 +56,9 @@
                             </form>
                         </td>
                         {% endif %}
+                        <td>
+                            <a href="{% url 'movie' mo.id %}">Перейти на страницу фильма</a>
+                        </td>
                     </tr>
                 {% endfor %}
         </tbody>
