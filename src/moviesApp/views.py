@@ -10,10 +10,23 @@ from .models import Movies, Reviews, Comment, Notification
 from .forms import MovieForm, ReviewForm, LoginForm, RegisterForm, CommentForm
 
 
+# ------------------------ГЛАВНЫЕ СТРАНИЦЫ------------------------
+
+# ГЛАВНАЯ СТРАНИЦА
 def index(request):
     return render(request, "moviesApp/index.html")
 
 
+# ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ
+@login_required(login_url='/login/')
+def profile(request):
+    user = get_object_or_404(User, username=request.user)
+    return render(request, "moviesApp/profile.html", {"user": user})
+
+
+# ------------------------АККАУНТ ПОЛЬЗОВАТЕЛЯ------------------------
+
+# АВТОРИЗАЦИЯ ПОЛЬЗОВАТЕЛЯ
 def auth_login(request):
     if request.method == 'POST':
         form = LoginForm(request, data=request.POST)  # Передаем данные из POST-запроса в форму
@@ -41,6 +54,7 @@ def auth_login(request):
     return render(request, 'moviesApp/login.html', {'form': form})
 
 
+# РЕГИСТРАЦИЯ ПОЛЬЗОВАТЕЛЯ
 def auth_register(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
@@ -53,6 +67,7 @@ def auth_register(request):
     return render(request, "moviesApp/register.html", {"form": form})
 
 
+# ВЫХОД ИЗ АККАУНТА ПОЛЬЗОВАТЕЛЯ
 def auth_logout(request):
     if request.method == 'POST':
         if request.user.is_authenticated:
@@ -63,12 +78,9 @@ def auth_logout(request):
         return redirect('home')
 
 
-@login_required(login_url='/login/')
-def profile(request):
-    user = get_object_or_404(User, username=request.user)
-    return render(request, "moviesApp/profile.html", {"user": user})
+# ------------------------ФИЛЬМЫ------------------------
 
-
+# СТРАНИЦА С ТАБЛИЦЕЙ ФИЛЬМОВ
 def movies(request):
     # Получаем все фильмы из базы данных
     movies_list = Movies.objects.all()
@@ -93,6 +105,7 @@ def movies(request):
     return render(request, "moviesApp/movies_page.html", {'form': form, 'movies': movies_list, 'user': user})
 
 
+# РЕДАКТИРОВАНИЕ ФИЛЬМОВ
 @login_required(login_url='/login/')
 def edit_movie(request, movie_id):
     movie = get_object_or_404(Movies, id=movie_id)
@@ -110,6 +123,7 @@ def edit_movie(request, movie_id):
     return HttpResponse(html)
 
 
+# УДАЛЕНИЕ ФИЛЬМОВ
 @login_required(login_url='/login/')
 def delete_movie(request, movie_id):
     movie = get_object_or_404(Movies, id=movie_id)
@@ -117,11 +131,15 @@ def delete_movie(request, movie_id):
     return redirect("movies")
 
 
+# СТРАНИЦА ОПРЕДЕЛЕННОГО ФИЛЬМА
 def movie_page(request, movie_id):
     movie = get_object_or_404(Movies, id=movie_id)
     return render(request, "moviesApp/movie.html", {"movie": movie})
 
 
+# ------------------------ОБСУЖДЕНИЯ------------------------
+
+# СТРАНИЦА СО ВСЕМИ ОБСУЖДЕНИЯМИ
 def reviews(request):
     user = request.user if request.user.is_authenticated else None
 
@@ -139,6 +157,7 @@ def reviews(request):
     return render(request, 'moviesApp/reviews_page.html', {'reviews': rvws, 'form': form, 'movies': mvs, "user": user})
 
 
+# СТРАНИЦА С ОБСУЖДЕНИЯМИ АВТОРИЗОВАННОГО ПОЛЬЗОВАТЕЛЯ
 @login_required(login_url='/login/')
 def my_reviews(request):
     mvs = Movies.objects.all()
@@ -155,9 +174,11 @@ def my_reviews(request):
     else:
         form = ReviewForm()
 
-    return render(request, 'moviesApp/my_reviews_page.html', {'reviews': rvws, 'movies': mvs, 'user': user, 'form': form})
+    return render(request, 'moviesApp/my_reviews_page.html',
+                  {'reviews': rvws, 'movies': mvs, 'user': user, 'form': form})
 
 
+# РЕДАКТИРОВАНИЕ ОБСУЖДЕНИЙ
 @login_required(login_url='/login/')
 def edit_review(request, review_id):
     review = get_object_or_404(Reviews, id=review_id)
@@ -175,6 +196,7 @@ def edit_review(request, review_id):
     return HttpResponse(html)
 
 
+# УДАЛЕНИЕ ОБСУЖДЕНИЙ
 @login_required(login_url='/login/')
 def delete_review(request, review_id):
     review = get_object_or_404(Reviews, id=review_id)
@@ -182,10 +204,13 @@ def delete_review(request, review_id):
     return redirect("my_reviews")
 
 
-#Комментарии
+# ------------------------КОММЕНТАРИИ------------------------
+
+# СТРАНИЦА С КОММЕНТАРИЯМИ ОПРЕДЕЛЕННОГО ОБСУЖДЕНИЯ
 def review_detail(request, review_id):
     review = get_object_or_404(Reviews, id=review_id)
-    comments = Comment.objects.filter(review=review, parent=None).select_related('user').prefetch_related('replies__user')
+    comments = Comment.objects.filter(review=review, parent=None).select_related('user').prefetch_related(
+        'replies__user')
     form = CommentForm()
 
     return render(request, 'moviesApp/review_detail.html', {
@@ -195,6 +220,7 @@ def review_detail(request, review_id):
     })
 
 
+# ДОБАВЛЕНИЕ КОММЕНТАРИЕВ
 @login_required
 def add_comment(request, review_id, parent_id=None):
     review = get_object_or_404(Reviews, id=review_id)
