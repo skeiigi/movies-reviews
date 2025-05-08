@@ -39,12 +39,14 @@
                         </td>
                         <td>{{ mo.about }}</td>
                         <td>{{ mo.changed_at }}</td>
+                        {% if user.is_authenticated %}
                         <td>
                             <button class="edit__button"
                                     data-id="{{ mo.id }}">
                                 Изменить
                             </button>
                         </td>
+
                         <td><form method="post" action="{% url 'delete_movie' mo.id %}" style="display: inline;">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-danger"
@@ -53,6 +55,7 @@
                                 </button>
                             </form>
                         </td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
         </tbody>

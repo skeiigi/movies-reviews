@@ -179,7 +179,6 @@ def delete_review(request, review_id):
 
 #Комментарии
 def review_detail(request, review_id):
-    print("💬 Вызвана review_detail()")  # Добавим это
     review = get_object_or_404(Reviews, id=review_id)
     comments = Comment.objects.filter(review=review, parent=None).select_related('user').prefetch_related('replies__user')
     form = CommentForm()
@@ -189,6 +188,7 @@ def review_detail(request, review_id):
         'comments': comments,
         'form': form,
     })
+
 
 @login_required
 def add_comment(request, review_id, parent_id=None):

@@ -34,7 +34,6 @@ class Reviews(models.Model):
     def __str__(self):
         return self.title
 
-# models.py
 
 class Comment(models.Model):
     review = models.ForeignKey(Reviews, on_delete=models.CASCADE, related_name='comments')
