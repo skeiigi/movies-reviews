@@ -83,7 +83,7 @@ def auth_logout(request):
 # СТРАНИЦА С ТАБЛИЦЕЙ ФИЛЬМОВ
 def movies(request):
     # Получаем все фильмы из базы данных
-    movies_list = Movies.objects.all()
+    movies_list = Movies.objects.filter(removed=False)
 
     if request.user.is_authenticated:
         user = get_object_or_404(User, username=request.user)
@@ -127,7 +127,8 @@ def edit_movie(request, movie_id):
 @login_required(login_url='/login/')
 def delete_movie(request, movie_id):
     movie = get_object_or_404(Movies, id=movie_id)
-    movie.delete()
+    movie.removed = True
+    movie.save()
     return redirect("movies")
 
 
@@ -152,16 +153,16 @@ def reviews(request):
             return redirect('reviews')
     else:
         form = ReviewForm()
-    mvs = Movies.objects.all()
-    rvws = Reviews.objects.select_related('user', 'movie').all()
+    mvs = Movies.objects.filter(removed=False)
+    rvws = Reviews.objects.select_related('user', 'movie').filter(removed=False)
     return render(request, 'moviesApp/reviews_page.html', {'reviews': rvws, 'form': form, 'movies': mvs, "user": user})
 
 
 # СТРАНИЦА С ОБСУЖДЕНИЯМИ АВТОРИЗОВАННОГО ПОЛЬЗОВАТЕЛЯ
 @login_required(login_url='/login/')
 def my_reviews(request):
-    mvs = Movies.objects.all()
-    rvws = Reviews.objects.filter(user=request.user).select_related('movie')
+    mvs = Movies.objects.filter(removed=False)
+    rvws = Reviews.objects.filter(user=request.user, removed=False).select_related('movie')
     user = request.user
 
     if request.method == "POST":
@@ -200,7 +201,8 @@ def edit_review(request, review_id):
 @login_required(login_url='/login/')
 def delete_review(request, review_id):
     review = get_object_or_404(Reviews, id=review_id)
-    review.delete()
+    review.removed = True
+    review.save()
     return redirect("my_reviews")
 
 

@@ -17,6 +17,7 @@ class Movies(models.Model):
     duration_minutes = models.PositiveIntegerField(verbose_name="Продолжительность", null=True)
     country_release = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True)
     changed_at = models.DateTimeField(auto_now=True, null=True)
+    removed = models.BooleanField(default=False, null=False)
 
     def get_duration(self):
         hours = self.duration_minutes // 60
@@ -42,6 +43,7 @@ class Reviews(models.Model):
         blank=False,
         null=True
     )
+    removed = models.BooleanField(default=False, null=False)
 
     def __str__(self):
         return self.title
@@ -53,6 +55,7 @@ class Comment(models.Model):
     content = models.TextField()
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL, related_name='replies')
     created_at = models.DateTimeField(auto_now_add=True)
+    removed = models.BooleanField(default=False, null=False)
 
     def __str__(self):
         return f'Комментарий от {self.user.username}'
@@ -63,6 +66,7 @@ class Notification(models.Model):
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    removed = models.BooleanField(default=False, null=False)
 
     def __str__(self):
         return f'Уведомление для {self.recipient.username}'
