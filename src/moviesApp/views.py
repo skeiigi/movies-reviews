@@ -80,10 +80,10 @@ def auth_logout(request):
 
 # ------------------------ФИЛЬМЫ------------------------
 
-# СТРАНИЦА С ТАБЛИЦЕЙ ФИЛЬМОВ
-def movies(request):
+# СТРАНИЦА С ТАБЛИЦЕЙ ФИЛЬМОВ ДЛЯ АДМИНОВ
+def movies_admin(request):
     # Получаем все фильмы из базы данных
-    movies_list = Movies.objects.filter(removed=False)
+    movies_list = Movies.objects.all()
 
     if request.user.is_authenticated:
         user = get_object_or_404(User, username=request.user)
@@ -96,13 +96,13 @@ def movies(request):
         if form.is_valid():
             # Если форма валидна, сохраняем данные и перенаправляем на страницу
             form.save()
-            return render(request, "moviesApp/movies_page.html", {'form': form, 'movies': movies_list})
+            return render(request, "moviesApp/movies_admin.html", {'form': form, 'movies': movies_list})
     else:
         # Если запрос GET, создаем пустую форму
         form = MovieForm()
 
     # Передаем форму и список фильмов в контекст
-    return render(request, "moviesApp/movies_page.html", {'form': form, 'movies': movies_list, 'user': user})
+    return render(request, "moviesApp/movies_admin.html", {'form': form, 'movies': movies_list, 'user': user})
 
 
 # РЕДАКТИРОВАНИЕ ФИЛЬМОВ
@@ -130,6 +130,13 @@ def delete_movie(request, movie_id):
     movie.removed = True
     movie.save()
     return redirect("movies")
+
+
+# СПИСОК ФИЛЬМОВ
+def movies_user(request):
+    movies_list = Movies.objects.filter(removed=False)
+
+    return render(request, "moviesApp/movies_page.html", {"movies": movies_list})
 
 
 # СТРАНИЦА ОПРЕДЕЛЕННОГО ФИЛЬМА

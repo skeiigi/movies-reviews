@@ -24,7 +24,8 @@ urlpatterns = [
     path("my_reviews/delete/<int:review_id>/", views.delete_review, name="delete_review"),
 
     # --ФИЛЬМЫ--
-    path('admin.movies/', views.movies, name="admin_movies"),
+    path('admin.movies/', views.movies_admin, name="admin_movies"),
+    path('movies/', views.movies_user, name="movies"),
     path('movie/<int:movie_id>', views.movie_page, name='movie'),
     path('movie/edit/<int:movie_id>/', views.edit_movie, name='edit_movie'),
     path("movie/delete/<int:movie_id>/", views.delete_movie, name="delete_movie"),
