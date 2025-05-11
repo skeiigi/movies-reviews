@@ -5,7 +5,7 @@
     <title>{{ movie.title }}</title>
 </head>
 <body>
-<a href="{% url 'movies' %}">Назад к фильмам</a>
+<a href="{% url 'admin_movies' %}">Назад к фильмам</a>
 <h1>{{ movie.title }}</h1>
 <p>{{ movie.about }}</p>
 <img src="{{ movie.poster.url }}" alt="{{ movie.title }}">

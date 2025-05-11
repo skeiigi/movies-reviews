@@ -7,7 +7,7 @@
 <body>
 <h1>Профиль пользователя {{ user.username }}</h1>
 
-<a href="{% url 'movies' %}">Фильмы</a><br><br>
+<a href="{% url 'admin_movies' %}">Фильмы</a><br><br>
 <a href="{% url 'reviews' %}">Обсуждения</a><br><br>
 
 <br>
@@ -16,6 +16,13 @@
     {% csrf_token %}
     <button type="submit">Выйти из системы</button>
 </form>
+
+{% if user.is_staff %}
+<h2>Админская панель</h2>
+<a href="{% url 'admin_movies' %}">Фильмы</a>
+{% endif %}
+
+
 
 </body>
 </html>

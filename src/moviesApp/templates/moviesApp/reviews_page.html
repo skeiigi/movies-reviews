@@ -41,7 +41,7 @@
           {% if rv.movie.poster %}
               <div style="display: flex; align-items: center;">
                 <img src="{{ rv.movie.poster.url }}" alt="{{ rv.movie.title }}" style="width: 100px; height: auto; margin-right: 10px;">
-                <span>{{ rv.movie.title }}</span>
+                <span><a href="{% url 'movie' rv.movie.id %}">{{ rv.movie.title }}</a></span>
               </div>
           {% else %}
             <span>(Постер к фильму не найден)</span>
