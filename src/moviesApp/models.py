@@ -19,6 +19,9 @@ class Movies(models.Model):
     changed_at = models.DateTimeField(auto_now=True, null=True)
     removed = models.BooleanField(default=False, null=False)
 
+    def __str__(self):
+        return self.title
+
     def get_duration(self):
         hours = self.duration_minutes // 60
         minutes = self.duration_minutes % 60
