@@ -13,12 +13,12 @@
 
   {% for comment in comments %}
     <div style="margin-bottom: 1rem; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
-      <strong>{{ comment.user.username }}</strong>: {{ comment.content }}
+      <strong><a href="{% url 'user_profile' comment.user.id %}">{{ comment.user.username }}</a></strong>: {{ comment.content }}
 
       <!-- Ответы -->
       {% for reply in comment.replies.all %}
         <div style="margin-left: 20px; margin-top: 5px; padding: 8px; background: #f9f9f9; border-radius: 5px;">
-          <strong>{{ reply.user.username }}</strong>: {{ reply.content }}
+          <strong><a href="{% url 'user_profile' reply.user.id %}">{{ reply.user.username }}</a></strong>: {{ reply.content }}
         </div>
       {% endfor %}
 

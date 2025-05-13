@@ -5,19 +5,30 @@
     <title>{{ user.username }}</title>
 </head>
 <body>
+
+{% if request.user.is_authenticated and request.user.id == user.id %}
+<h1>Ваш профиль, {{ user.username }}</h1>
+{% else %}
 <h1>Профиль пользователя {{ user.username }}</h1>
+{% endif %}
+
+<h2>Статистика пользователя: </h2>
+<p>Написано статей: {{ review_count }}</p>
+<p>Написано комментариев</p>
 
 <a href="{% url 'movies' %}">Фильмы</a><br><br>
 <a href="{% url 'reviews' %}">Обсуждения</a><br><br>
 
 <br>
 
+{% if request.user.is_authenticated %}
 <form method="post" action="{% url 'logout' %}">
     {% csrf_token %}
     <button type="submit">Выйти из системы</button>
 </form>
+{% endif %}
 
-{% if user.is_staff %}
+{% if request.user.is_staff %}
 <h2>Админская панель</h2>
 <a href="{% url 'admin_movies' %}">Фильмы</a>
 {% endif %}

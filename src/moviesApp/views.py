@@ -18,10 +18,24 @@ def index(request):
 
 
 # ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ
-@login_required(login_url='/login/')
-def profile(request):
-    user = get_object_or_404(User, username=request.user)
-    return render(request, "moviesApp/profile.html", {"user": user})
+#@login_required(login_url='/login/')
+def profile_view(request, user_id=None):
+    if user_id is None:
+        user = request.user
+    else:
+        user = get_object_or_404(User, id=user_id)
+
+    review_count = Reviews.objects.filter(user=user, removed=False).count()
+
+    return render(request, "moviesApp/profile.html", {"user": user, "review_count": review_count})
+
+
+def user_profile(request, user_id):
+
+    user = get_object_or_404(User, id=user_id)
+    review_count = Reviews.objects.filter(user=user, removed=False).count()
+
+    return render(request, "moviesApp/profile.html", {"user": user, "review_count": review_count})
 
 
 # ------------------------АККАУНТ ПОЛЬЗОВАТЕЛЯ------------------------

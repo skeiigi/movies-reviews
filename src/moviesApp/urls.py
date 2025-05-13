@@ -10,12 +10,13 @@ urlpatterns = [
 
     # --ГЛАВНЫЕ СТРАНИЦЫ--
     path('', views.index, name="home"),
-    path('profile/', views.profile, name="profile"),
+    path('profile/', views.profile_view, name="profile"),
 
     # --АККАУНТ ПОЛЬЗОВАТЕЛЯ--
     path('login/', views.auth_login, name="login"),
     path('register/', views.auth_register, name="register"),
     path('logout/', views.auth_logout, name='logout'),
+    path('user/<int:user_id>/', views.profile_view, name="user_profile"),
 
     # --ОБСУЖДЕНИЯ--
     path('reviews/', views.reviews, name="reviews"),
