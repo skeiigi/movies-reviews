@@ -1,12 +1,11 @@
-<!DOCTYPE html>
-{% load static %}
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Фильмы</title>
-    <link rel="stylesheet" href="{% static 'moviesApp/css/styles.css' %}">
-</head>
-<body>
+{% extends "moviesApp/base.html" %}
+
+{% block title %}
+    Фильмы
+{% endblock %}
+
+{% block content %}
+
 {% if user.is_authenticated %}
     <a href="{% url 'profile' %}">Назад</a>
     <p>Имя {{ user.username}}</p>
@@ -36,5 +35,4 @@
                 <h4>Фильмов нет...</h4>
             {% endif %}
 
-</body>
-</html>
+{% endblock %}

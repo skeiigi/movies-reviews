@@ -12,7 +12,7 @@ class Country(models.Model):
 
 class Movies(models.Model):
     title = models.CharField(max_length=50)
-    poster = models.ImageField(upload_to='images/', null=True, blank=True)
+    poster = models.ImageField(upload_to='images/', null=True, blank=False)
     about = models.TextField()
     duration_minutes = models.PositiveIntegerField(verbose_name="Продолжительность", null=True)
     country_release = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True)

@@ -1,12 +1,11 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Мои статьи</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'moviesApp/css/styles.css' %}">
-</head>
-<body>
+{% extends "moviesApp/base.html" %}
+
+{% block title %}
+    Мои статьи
+{% endblock %}
+
+
+{% block content %}
 <h1>Статьи {{ user.username }}</h1>
 <a href="{% url 'reviews' %}">Все обсуждения</a>
 
@@ -149,5 +148,4 @@
     modalElem.addEventListener('click', closeModal);
 </script>
 
-</body>
-</html>
+{% endblock %}

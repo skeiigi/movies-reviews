@@ -1,9 +1,11 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Регистрация</title>
-</head>
+{% extends "moviesApp/base.html" %}
+
+{% block title %}
+    Регистрация
+{% endblock %}
+
+
+{% block content %}
 <body>
 <a href="{% url 'home' %}">Назад</a>
 <h1>Регистрация</h1>
@@ -14,5 +16,5 @@
 </form>
 <br>
 <a>Уже есть аккаунт? </a><a href="{% url 'login' %}">Авторизуйтесь</a>
-</body>
-</html>
+
+{% endblock %}

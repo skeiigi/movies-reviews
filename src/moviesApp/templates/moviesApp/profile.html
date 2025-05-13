@@ -1,16 +1,11 @@
-<!DOCTYPE html>
-{% load static %}
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ user.username }}</title>
-    <link rel="stylesheet" href="{% static 'moviesApp/css/styles.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css ">
-</head>
-<body>
+{% extends "moviesApp/base.html" %}
 
-{% include "moviesApp/header.html" %}
+{% block title %}
+    {{ user.username }}
+{% endblock %}
 
+
+{% block content %}
 {% if request.user.is_authenticated and request.user.id == user.id %}
 <h1>Ваш профиль, {{ user.username }}</h1>
 {% else %}
@@ -33,12 +28,9 @@
 </form>
 {% endif %}
 
-{% if request.user.is_staff %}
+{% if request.user.is_authenticated and request.user.id == user.id and request.user.is_staff %}
 <h2>Админская панель</h2>
 <a href="{% url 'admin_movies' %}">Фильмы</a>
 {% endif %}
 
-
-
-</body>
-</html>
+{% endblock %}
