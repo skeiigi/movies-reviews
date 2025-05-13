@@ -76,13 +76,13 @@ body {
 .logo a {
   font-size: 24px;
   font-weight: bold;
-  color: white; /* Цвет текста ссылки */
-  text-decoration: none; /* Убрать подчеркивание */
-  transition: opacity 0.3s ease; /* Плавность при наведении */
+  color: white;
+  text-decoration: none;
+  transition: opacity 0.3s ease;
 }
 
 .logo a:hover {
-  opacity: 0.8; /* Легкое затемнение при наведении */
+  opacity: 0.8;
 }
 
 .menu {
@@ -100,17 +100,18 @@ body {
 }
 
 .menu-item i {
-  margin-right: 10px; /* Фиксированное расстояние между иконкой и текстом */
+  margin-right: 8px; /* Фиксированное расстояние между иконкой и текстом */
+}
+
+.right-items {
+  display: flex;
+  gap: 10px; /* Маленькое расстояние между уведомлением и профилем */
 }
 
 .menu-item:hover {
-  opacity: 0.8; /* Легкое затемнение при наведении */
+  opacity: 0.8;
 }
 
 .menu-item svg {
   margin-right: 5px;
-}
-
-.dropdown:hover .dropdown-menu {
-  display: block;
 }
