@@ -1,10 +1,15 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>{{ user.username }}</title>
+    <link rel="stylesheet" href="{% static 'moviesApp/css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css ">
 </head>
 <body>
+
+{% include "moviesApp/header.html" %}
 
 {% if request.user.is_authenticated and request.user.id == user.id %}
 <h1>Ваш профиль, {{ user.username }}</h1>

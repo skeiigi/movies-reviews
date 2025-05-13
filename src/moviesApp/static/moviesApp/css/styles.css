@@ -56,3 +56,61 @@ th {
 .modal__close:focus-visible {
     outline-color: green;
 }
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #97a8b5;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background: linear-gradient(to right, #00c4b6, #3e64ff);
+  color: white;
+}
+
+.logo a {
+  font-size: 24px;
+  font-weight: bold;
+  color: white; /* Цвет текста ссылки */
+  text-decoration: none; /* Убрать подчеркивание */
+  transition: opacity 0.3s ease; /* Плавность при наведении */
+}
+
+.logo a:hover {
+  opacity: 0.8; /* Легкое затемнение при наведении */
+}
+
+.menu {
+  display: flex;
+  gap: 30px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+  transition: opacity 0.3s ease;
+}
+
+.menu-item i {
+  margin-right: 10px; /* Фиксированное расстояние между иконкой и текстом */
+}
+
+.menu-item:hover {
+  opacity: 0.8; /* Легкое затемнение при наведении */
+}
+
+.menu-item svg {
+  margin-right: 5px;
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
