@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
@@ -8,6 +8,11 @@ from django.template.loader import render_to_string
 
 from .models import Movies, Reviews, Comment, Notification
 from .forms import MovieForm, ReviewForm, LoginForm, RegisterForm, CommentForm
+
+
+# ВСПОМОГАТЕЛЬНЫЙ МЕТОД ДЛЯ СКРЫТИЯ СТРАНИЦЫ С АДМИНКОЙ
+def is_admin(user):
+    return user.is_superuser
 
 
 # ------------------------ГЛАВНЫЕ СТРАНИЦЫ------------------------
@@ -18,21 +23,12 @@ def index(request):
 
 
 # ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ
-#@login_required(login_url='/login/')
 def profile_view(request, user_id=None):
     if user_id is None:
         user = request.user
     else:
         user = get_object_or_404(User, id=user_id)
 
-    review_count = Reviews.objects.filter(user=user, removed=False).count()
-
-    return render(request, "moviesApp/profile.html", {"user": user, "review_count": review_count})
-
-
-def user_profile(request, user_id):
-
-    user = get_object_or_404(User, id=user_id)
     review_count = Reviews.objects.filter(user=user, removed=False).count()
 
     return render(request, "moviesApp/profile.html", {"user": user, "review_count": review_count})
@@ -95,6 +91,7 @@ def auth_logout(request):
 # ------------------------ФИЛЬМЫ------------------------
 
 # СТРАНИЦА С ТАБЛИЦЕЙ ФИЛЬМОВ ДЛЯ АДМИНОВ
+@user_passes_test(is_admin, login_url='movies')
 def movies_admin(request):
     # Получаем все фильмы из базы данных
     movies_list = Movies.objects.all()
