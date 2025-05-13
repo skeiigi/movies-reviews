@@ -8,9 +8,6 @@ th, td {
     padding: 10px;
     text-align: center;
 }
-th {
-    background-color: #f4f4f4;
-}
 
 .modal {
     position: fixed;
