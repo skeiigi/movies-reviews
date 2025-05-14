@@ -270,7 +270,9 @@ def add_comment(request, review_id, parent_id=None):
                 )
 
     return redirect('review_detail', review_id=review.id)
-#ОТВЕТЫ НА КОММЕНТАРИИ
+
+
+# ОТВЕТЫ НА КОММЕНТАРИИ
 def reply_comment(request, pk, parent_id):
     review = get_object_or_404(Review, pk=pk)
     parent = get_object_or_404(Comment, pk=parent_id)
@@ -290,28 +292,23 @@ def reply_comment(request, pk, parent_id):
 
     return redirect('review_detail', pk=pk)
 
-#УДАЛЕНИЕ КОММЕНТАРИЕВ/ОТВЕТОВ
+
+# УДАЛЕНИЕ КОММЕНТАРИЕВ/ОТВЕТОВ
 @login_required
 def delete_comment(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
     review = comment.review
-    if comment.user != request.user:
-        messages.error(request, "Вы не можете удалить чужой комментарий.")
-        return redirect('review_detail', review_id=review.id)
-
-    comment.delete()
+    comment.removed = True
+    comment.save()
     messages.success(request, "Комментарий удалён.")
     return redirect('review_detail', review_id=review.id)
 
-#РЕДАКТИРОВАНИЕ КОММЕНТАРИЕВ/ОТВЕТОВ
+
+# РЕДАКТИРОВАНИЕ КОММЕНТАРИЕВ/ОТВЕТОВ
 @login_required
 def edit_comment(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
     review = comment.review
-
-    if comment.user != request.user:
-        messages.error(request, "Вы не можете редактировать чужой комментарий.")
-        return redirect('review_detail', review_id=review.id)
 
     if request.method == 'POST':
         form = CommentForm(request.POST, instance=comment)
