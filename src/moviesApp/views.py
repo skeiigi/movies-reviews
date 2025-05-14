@@ -277,10 +277,6 @@ def reply_comment(request, pk, parent_id):
     review = get_object_or_404(Review, pk=pk)
     parent = get_object_or_404(Comment, pk=parent_id)
 
-    if not request.user.is_authenticated:
-        messages.warning(request, "Чтобы ответить на комментарий, необходимо войти в аккаунт.")
-        return redirect('login')
-
     if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():

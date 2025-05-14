@@ -55,10 +55,6 @@
           {{ form.as_p }}
           <button type="submit">Ответить</button>
         </form>
-      {% else %}
-        <p>
-          Чтобы ответить, <a href="{% url 'login' %}">войдите в аккаунт</a>.
-        </p>
       {% endif %}
     </div>
   {% empty %}
@@ -75,7 +71,7 @@
     </form>
   {% else %}
     <p>
-      Чтобы оставить комментарий, <a href="{% url 'login' %}">войдите в аккаунт</a>.
+      Чтобы оставлять комментарии, <a href="{% url 'login' %}">войдите в аккаунт</a>.
     </p>
   {% endif %}
 </div>
