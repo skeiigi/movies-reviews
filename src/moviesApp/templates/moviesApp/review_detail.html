@@ -28,7 +28,8 @@
       {% if user == comment.user %}
         <div style="margin-top: 5px;">
           <a href="{% url 'edit_comment' comment.id %}">Редактировать</a> |
-          <a href="{% url 'delete_comment' comment.id %}">Удалить</a>
+          <a href="{% url 'delete_comment' comment.id %}"
+             onclick="return confirm('Вы уверены, что хотите удалить комментарий?');">Удалить</a>
         </div>
       {% endif %}
       <!-- Ответы -->
@@ -40,7 +41,8 @@
           {% if user == reply.user %}
             <div style="margin-left: 25px; margin-top: 3px;">
               <a href="{% url 'edit_comment' reply.id %}">Редактировать</a> |
-              <a href="{% url 'delete_comment' reply.id %}">Удалить</a>
+              <a href="{% url 'delete_comment' reply.id %}"
+                 onclick="return confirm('Вы уверены, что хотите удалить комментарий?');">Удалить</a>
             </div>
           {% endif %}
         </div>
