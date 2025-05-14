@@ -14,20 +14,37 @@
   {% for comment in comments %}
     <div style="margin-bottom: 1rem; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
       <strong><a href="{% url 'user_profile' comment.user.id %}">{{ comment.user.username }}</a></strong>: {{ comment.content }}
-
+      {% if user == comment.user %}
+        <div style="margin-top: 5px;">
+          <a href="{% url 'edit_comment' comment.id %}">Редактировать</a> |
+          <a href="{% url 'delete_comment' comment.id %}">Удалить</a>
+        </div>
+      {% endif %}
       <!-- Ответы -->
       {% for reply in comment.replies.all %}
         <div style="margin-left: 20px; margin-top: 5px; padding: 8px; background: #f9f9f9; border-radius: 5px;">
           <strong><a href="{% url 'user_profile' reply.user.id %}">{{ reply.user.username }}</a></strong>: {{ reply.content }}
+          {% if user == reply.user %}
+            <div style="margin-left: 25px; margin-top: 3px;">
+              <a href="{% url 'edit_comment' reply.id %}">Редактировать</a> |
+              <a href="{% url 'delete_comment' reply.id %}">Удалить</a>
+            </div>
+          {% endif %}
         </div>
       {% endfor %}
 
       <!-- Форма ответа -->
-      <form method="post" action="{% url 'reply_comment' review.id comment.id %}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Ответить</button>
-      </form>
+      {% if user.is_authenticated %}
+        <form method="post" action="{% url 'reply_comment' review.id comment.id %}">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit">Ответить</button>
+        </form>
+      {% else %}
+        <p>
+          Чтобы ответить, <a href="{% url 'login' %}">войдите в аккаунт</a>.
+        </p>
+      {% endif %}
     </div>
   {% empty %}
     <p>Комментариев пока нет.</p>
@@ -35,10 +52,16 @@
 
   <hr>
   <h5>Оставить комментарий:</h5>
-  <form method="post" action="{% url 'add_comment' review.id %}">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Добавить комментарий</button>
-  </form>
+  {% if user.is_authenticated %}
+    <form method="post" action="{% url 'add_comment' review.id %}">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Добавить комментарий</button>
+    </form>
+  {% else %}
+    <p>
+      Чтобы оставить комментарий, <a href="{% url 'login' %}">войдите в аккаунт</a>.
+    </p>
+  {% endif %}
 </div>
 {% endblock %}
