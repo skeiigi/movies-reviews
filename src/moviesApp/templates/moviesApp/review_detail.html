@@ -5,7 +5,16 @@
   <a href="{% url 'reviews' %}">← Назад к обсуждениям</a>
 
   <h2>{{ review.title }}</h2>
-  <p><em>Фильм:</em> {{ review.movie.title|default:"(не указан)" }}</p>
+  {% if review.movie %}
+    <div style="display: flex; align-items: center;">
+      {% if review.movie.poster %}
+        <img src="{{ review.movie.poster.url }}" alt="{{ review.movie.title }}" style="width: 120px; height: auto; margin-right: 10px;">
+      {% endif %}
+      <p><strong>Фильм:</strong> {{ review.movie.title }}</p>
+    </div>
+  {% else %}
+    <p><strong>Фильм:</strong> (не указан)</p>
+  {% endif %}
   <p>{{ review.content }}</p>
   <hr>
 
