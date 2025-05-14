@@ -30,8 +30,13 @@ def profile_view(request, user_id=None):
         user = get_object_or_404(User, id=user_id)
 
     review_count = Reviews.objects.filter(user=user, removed=False).count()
+    comment_count = Comment.objects.filter(user=user, removed=False).count()
 
-    return render(request, "moviesApp/profile.html", {"user": user, "review_count": review_count})
+    return render(request, "moviesApp/profile.html",
+                  {"user": user,
+                   "review_count": review_count,
+                   "comment_count": comment_count}
+                  )
 
 
 # ------------------------АККАУНТ ПОЛЬЗОВАТЕЛЯ------------------------
