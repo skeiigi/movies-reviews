@@ -59,6 +59,7 @@ class Comment(models.Model):
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL, related_name='replies')
     created_at = models.DateTimeField(auto_now_add=True)
     removed = models.BooleanField(default=False, null=False)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f'Комментарий от {self.user.username}'

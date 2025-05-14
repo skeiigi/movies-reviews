@@ -23,6 +23,8 @@
   {% for comment in comments %}
     <div style="margin-bottom: 1rem; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
       <strong><a href="{% url 'user_profile' comment.user.id %}">{{ comment.user.username }}</a></strong>: {{ comment.content }}
+      <p><small>Добавлено: {{ comment.created_at|date:"d M Y, H:i" }}</small></p>
+      <p><small>Последнее изменение: {{ comment.updated_at|date:"d M Y, H:i" }}</small></p>
       {% if user == comment.user %}
         <div style="margin-top: 5px;">
           <a href="{% url 'edit_comment' comment.id %}">Редактировать</a> |
@@ -33,6 +35,8 @@
       {% for reply in comment.replies.all %}
         <div style="margin-left: 20px; margin-top: 5px; padding: 8px; background: #f9f9f9; border-radius: 5px;">
           <strong><a href="{% url 'user_profile' reply.user.id %}">{{ reply.user.username }}</a></strong>: {{ reply.content }}
+          <p><small>Добавлено: {{ reply.created_at|date:"d M Y, H:i" }}</small></p>
+          <p><small>Последнее изменение: {{ reply.updated_at|date:"d M Y, H:i" }}</small></p>
           {% if user == reply.user %}
             <div style="margin-left: 25px; margin-top: 3px;">
               <a href="{% url 'edit_comment' reply.id %}">Редактировать</a> |
