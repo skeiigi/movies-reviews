@@ -7,6 +7,7 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.db.models import Prefetch
 
+
 from .models import Movies, Reviews, Comment, Notification
 from .forms import MovieForm, ReviewForm, LoginForm, RegisterForm, CommentForm
 
@@ -268,8 +269,14 @@ def add_comment(request, review_id, parent_id=None):
             comment.parent = parent
             comment.save()
 
-            # Уведомление
-            if parent and parent.user != request.user:
+            if parent is None and review.user != request.user:
+                Notification.objects.create(
+                    recipient = review.user,
+                    comment=comment
+                )
+
+            # Уведомление об ответе на комментарий
+            elif parent is not None and parent.user != request.user:
                 Notification.objects.create(
                     recipient=parent.user,
                     comment=comment
@@ -325,3 +332,21 @@ def edit_comment(request, pk):
         'form': form,
         'comment': comment
     })
+
+# УВЕДОМЛЕНИЯ
+def notifications_view(request):
+    if not request.user.is_authenticated:
+        html = render_to_string("moviesApp/notifications_login_required.html")
+        return HttpResponse(html, status=200)
+
+    notifications = Notification.objects.filter(
+        recipient=request.user, removed=False
+    ).order_by("-created_at")[:10]
+
+    for n in notifications:
+        if not n.is_read:
+            n.is_read = True
+            n.save()
+
+    html = render_to_string("moviesApp/notifications_list.html", {"notifications": notifications})
+    return HttpResponse(html)

@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'django_recaptcha',
 ]
 
+LOGIN_URL = '/login/'
+
 RECAPTCHA_PUBLIC_KEY = '6LcbBikrAAAAADz0aj-dHQtCtNa6CzjFkDtxjYM5'
 RECAPTCHA_PRIVATE_KEY = '6LcbBikrAAAAACJGksQuEVUVnTevahKl-hNPsbo7'
 

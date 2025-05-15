@@ -6,6 +6,7 @@
     <title>{% block title %}Мой сайт{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'moviesApp/css/styles.css' %}">
     <link rel="stylesheet" href="{% static 'moviesApp/fontawesome/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'moviesApp/css/notifications.css' %}">
 </head>
 <body>
 {% include "moviesApp/header.html" %}
@@ -14,6 +15,7 @@
 {% block content %}
 {% endblock %}
 </div>
+    <script src="{% static 'moviesApp/js/notification.js' %}"></script>
 <!--Скрипт для кнопки "Показать/Скрыть ответы"-->
     <script src="{% static 'moviesApp/js/toggle_replies.js' %}"></script>
 </body>

@@ -3,7 +3,13 @@
     <nav class="menu">
       <a href="{% url 'movies' %}" class="menu-item"><i class="fa-solid fa-film"></i><span>Фильмы</span></a>
       <div class="right-items">
-        <a href="#" class="menu-item"><i class="fas fa-bell icon-notification"></i></a>
+        <a href="#" id="notification-icon" class="menu-item">
+          <i class="fas fa-bell icon-notification"></i>
+          <span id="notification-count" class="notification-count" style="display:none;">!</span>
+        </a>
+        <div id="notification-dropdown" class="notification-dropdown" style="display:none; position: absolute; right: 20px; top: 60px; background-color: white; border: 1px solid #ccc; border-radius: 8px; width: 300px; max-height: 400px; overflow-y: auto; z-index: 1000;">
+          <div id="notification-list">Загрузка...</div>
+        </div>
         <div class="dropdown">
           {% if request.user.is_authenticated %}
             <a href="{% url 'profile' %}" class="menu-item"><i class="fas fa-user-circle icon-profile"></i></a>
