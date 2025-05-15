@@ -42,31 +42,36 @@
         {% endif %}
       {% endif %}
 
-      <!-- Ответы (всегда показываем, даже если родитель удалён) -->
-      {% for reply in comment.filtered_replies %}
-        <div style="margin-left: 20px; margin-top: 5px; padding: 8px; background: #f9f9f9; border-radius: 5px;">
-          {% if reply.removed %}
-            <p><em>Комментарий удалён.</em></p>
-          {% else %}
-            <strong><a href="{% url 'user_profile' reply.user.id %}">{{ reply.user.username }}</a></strong>: {{ reply.content }}
-            <p><small>Добавлено: {{ reply.created_at|date:"d M Y, H:i" }}</small></p>
-            <p><small>Последнее изменение: {{ reply.updated_at|date:"d M Y, H:i" }}</small></p>
-            {% if user == reply.user %}
-              <div style="margin-left: 25px; margin-top: 3px;">
-                <form method="post" action="{% url 'edit_comment' reply.id %}" style="display: inline;">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-danger">Редактировать</button>
-                </form> |
-                <form method="post" action="{% url 'delete_comment' reply.id %}" style="display: inline;">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены, что хотите удалить комментарий?');">Удалить</button>
-                </form>
-              </div>
-            {% endif %}
-          {% endif %}
-        </div>
-      {% endfor %}
+      {% if comment.filtered_replies %}
+        <button class="toggle-replies btn btn-sm btn-secondary" data-comment-id="{{ comment.id }}" style="margin-top: 8px;">Показать ответы</button>
+      {% endif %}
 
+      <!-- Ответы (всегда показываем, даже если родитель удалён) -->
+      <div id = "replies-{{ comment.id }}" style="display: none; margin-top: 10px;">
+        {% for reply in comment.filtered_replies %}
+          <div style="margin-left: 20px; margin-top: 5px; padding: 8px; background: #f9f9f9; border-radius: 5px;">
+            {% if reply.removed %}
+              <p><em>Комментарий удалён.</em></p>
+            {% else %}
+              <strong><a href="{% url 'user_profile' reply.user.id %}">{{ reply.user.username }}</a></strong>: {{ reply.content }}
+              <p><small>Добавлено: {{ reply.created_at|date:"d M Y, H:i" }}</small></p>
+              <p><small>Последнее изменение: {{ reply.updated_at|date:"d M Y, H:i" }}</small></p>
+              {% if user == reply.user %}
+                <div style="margin-left: 25px; margin-top: 3px;">
+                  <form method="post" action="{% url 'edit_comment' reply.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Редактировать</button>
+                  </form> |
+                  <form method="post" action="{% url 'delete_comment' reply.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены, что хотите удалить комментарий?');">Удалить</button>
+                  </form>
+                </div>
+              {% endif %}
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
       <!-- Форма ответа (только если родитель не удалён) -->
       {% if user.is_authenticated and not comment.removed %}
         <form method="post" action="{% url 'reply_comment' review.id comment.id %}">
