@@ -22,55 +22,53 @@
 
   {% for comment in comments %}
     <div style="margin-bottom: 1rem; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
-      <strong><a href="{% url 'user_profile' comment.user.id %}">{{ comment.user.username }}</a></strong>: {{ comment.content }}
-      <p><small>Добавлено: {{ comment.created_at|date:"d M Y, H:i" }}</small></p>
-      <p><small>Последнее изменение: {{ comment.updated_at|date:"d M Y, H:i" }}</small></p>
-      {% if user == comment.user %}
-        <div style="margin-top: 5px;">
-          <form method="post" action="{% url 'edit_comment' comment.id %}" style="display: inline;">
+      {% if comment.removed %}
+        <p><em>Комментарий удалён.</em></p>
+      {% else %}
+        <strong><a href="{% url 'user_profile' comment.user.id %}">{{ comment.user.username }}</a></strong>: {{ comment.content }}
+        <p><small>Добавлено: {{ comment.created_at|date:"d M Y, H:i" }}</small></p>
+        <p><small>Последнее изменение: {{ comment.updated_at|date:"d M Y, H:i" }}</small></p>
+        {% if user == comment.user %}
+          <div style="margin-top: 5px;">
+            <form method="post" action="{% url 'edit_comment' comment.id %}" style="display: inline;">
               {% csrf_token %}
-              <button type="submit" class="btn btn-danger">
-                  Редактировать
-              </button>
-          </form> |
-
-          <form method="post" action="{% url 'delete_comment' comment.id %}" style="display: inline;">
+              <button type="submit" class="btn btn-danger">Редактировать</button>
+            </form> |
+            <form method="post" action="{% url 'delete_comment' comment.id %}" style="display: inline;">
               {% csrf_token %}
-              <button type="submit" class="btn btn-danger"
-                      onclick="return confirm('Вы уверены, что хотите удалить комментарий?');">
-                  Удалить
-              </button>
-          </form>
-        </div>
+              <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены, что хотите удалить комментарий?');">Удалить</button>
+            </form>
+          </div>
+        {% endif %}
       {% endif %}
-      <!-- Ответы -->
-      {% for reply in comment.replies.all %}
+
+      <!-- Ответы (всегда показываем, даже если родитель удалён) -->
+      {% for reply in comment.filtered_replies %}
         <div style="margin-left: 20px; margin-top: 5px; padding: 8px; background: #f9f9f9; border-radius: 5px;">
-          <strong><a href="{% url 'user_profile' reply.user.id %}">{{ reply.user.username }}</a></strong>: {{ reply.content }}
-          <p><small>Добавлено: {{ reply.created_at|date:"d M Y, H:i" }}</small></p>
-          <p><small>Последнее изменение: {{ reply.updated_at|date:"d M Y, H:i" }}</small></p>
-          {% if user == reply.user %}
-            <div style="margin-left: 25px; margin-top: 3px;">
-              <form method="post" action="{% url 'edit_comment' reply.id %}" style="display: inline;">
+          {% if reply.removed %}
+            <p><em>Комментарий удалён.</em></p>
+          {% else %}
+            <strong><a href="{% url 'user_profile' reply.user.id %}">{{ reply.user.username }}</a></strong>: {{ reply.content }}
+            <p><small>Добавлено: {{ reply.created_at|date:"d M Y, H:i" }}</small></p>
+            <p><small>Последнее изменение: {{ reply.updated_at|date:"d M Y, H:i" }}</small></p>
+            {% if user == reply.user %}
+              <div style="margin-left: 25px; margin-top: 3px;">
+                <form method="post" action="{% url 'edit_comment' reply.id %}" style="display: inline;">
                   {% csrf_token %}
-                  <button type="submit" class="btn btn-danger">
-                      Редактировать
-                  </button>
-              </form> |
-              <form method="post" action="{% url 'delete_comment' reply.id %}" style="display: inline;">
+                  <button type="submit" class="btn btn-danger">Редактировать</button>
+                </form> |
+                <form method="post" action="{% url 'delete_comment' reply.id %}" style="display: inline;">
                   {% csrf_token %}
-                  <button type="submit" class="btn btn-danger"
-                          onclick="return confirm('Вы уверены, что хотите удалить комментарий?');">
-                      Удалить
-                  </button>
-              </form>
-            </div>
+                  <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены, что хотите удалить комментарий?');">Удалить</button>
+                </form>
+              </div>
+            {% endif %}
           {% endif %}
         </div>
       {% endfor %}
 
-      <!-- Форма ответа -->
-      {% if user.is_authenticated %}
+      <!-- Форма ответа (только если родитель не удалён) -->
+      {% if user.is_authenticated and not comment.removed %}
         <form method="post" action="{% url 'reply_comment' review.id comment.id %}">
           {% csrf_token %}
           {{ form.as_p }}
@@ -91,9 +89,7 @@
       <button type="submit">Добавить комментарий</button>
     </form>
   {% else %}
-    <p>
-      Чтобы оставлять комментарии, <a href="{% url 'login' %}">войдите в аккаунт</a>.
-    </p>
+    <p>Чтобы оставлять комментарии, <a href="{% url 'login' %}">войдите в аккаунт</a>.</p>
   {% endif %}
 </div>
 {% endblock %}

@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.template.loader import render_to_string
+from django.db.models import Prefetch
 
 from .models import Movies, Reviews, Comment, Notification
 from .forms import MovieForm, ReviewForm, LoginForm, RegisterForm, CommentForm
@@ -235,7 +236,12 @@ def delete_review(request, review_id):
 def review_detail(request, review_id):
     review = get_object_or_404(Reviews, id=review_id)
     comments = Comment.objects.filter(review=review, parent=None).select_related('user').prefetch_related(
-        'replies__user')
+        Prefetch(
+            'replies',
+            queryset=Comment.objects.filter(removed=False).select_related('user'),
+            to_attr='filtered_replies'
+        )
+    )
     form = CommentForm()
 
     return render(request, 'moviesApp/review_detail.html', {
@@ -274,7 +280,7 @@ def add_comment(request, review_id, parent_id=None):
 
 # ОТВЕТЫ НА КОММЕНТАРИИ
 def reply_comment(request, pk, parent_id):
-    review = get_object_or_404(Review, pk=pk)
+    review = get_object_or_404(Reviews, pk=pk)
     parent = get_object_or_404(Comment, pk=parent_id)
 
     if request.method == 'POST':
