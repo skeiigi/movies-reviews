@@ -27,9 +27,20 @@
       <p><small>Последнее изменение: {{ comment.updated_at|date:"d M Y, H:i" }}</small></p>
       {% if user == comment.user %}
         <div style="margin-top: 5px;">
-          <a href="{% url 'edit_comment' comment.id %}">Редактировать</a> |
-          <a href="{% url 'delete_comment' comment.id %}"
-             onclick="return confirm('Вы уверены, что хотите удалить комментарий?');">Удалить</a>
+          <form method="post" action="{% url 'edit_comment' comment.id %}" style="display: inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">
+                  Редактировать
+              </button>
+          </form> |
+
+          <form method="post" action="{% url 'delete_comment' comment.id %}" style="display: inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger"
+                      onclick="return confirm('Вы уверены, что хотите удалить комментарий?');">
+                  Удалить
+              </button>
+          </form>
         </div>
       {% endif %}
       <!-- Ответы -->
@@ -40,9 +51,19 @@
           <p><small>Последнее изменение: {{ reply.updated_at|date:"d M Y, H:i" }}</small></p>
           {% if user == reply.user %}
             <div style="margin-left: 25px; margin-top: 3px;">
-              <a href="{% url 'edit_comment' reply.id %}">Редактировать</a> |
-              <a href="{% url 'delete_comment' reply.id %}"
-                 onclick="return confirm('Вы уверены, что хотите удалить комментарий?');">Удалить</a>
+              <form method="post" action="{% url 'edit_comment' reply.id %}" style="display: inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger">
+                      Редактировать
+                  </button>
+              </form> |
+              <form method="post" action="{% url 'delete_comment' reply.id %}" style="display: inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger"
+                          onclick="return confirm('Вы уверены, что хотите удалить комментарий?');">
+                      Удалить
+                  </button>
+              </form>
             </div>
           {% endif %}
         </div>

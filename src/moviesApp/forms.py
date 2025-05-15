@@ -45,7 +45,7 @@ class RegisterForm(UserCreationForm):
         )
         self.fields["email"].widget.attrs.update(
             {"id": "id_email", "placeholder": " "}
-        )  # noqa: E501
+        )
         self.fields["password1"].widget.attrs.update(
             {"id": "id_password1", "placeholder": " "}
         )
