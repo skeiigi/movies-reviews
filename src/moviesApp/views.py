@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.template.loader import render_to_string
 from django.db.models import Prefetch
 
@@ -214,12 +214,29 @@ def edit_review(request, review_id):
         if form.is_valid():
             if form.has_changed():
                 form.save()
-                return HttpResponse(status=204)  # Успешно, без контента
-    else:
-        form = ReviewForm(instance=review)
+                # Возвращаем JSON с обновлёнными данными
+                return JsonResponse({
+                    'success': True,
+                    'review': {
+                        'id': review.id,
+                        'title': review.title,
+                        'content': review.content,
+                        'created_at': review.created_at.strftime('%Y-%m-%d %H:%M'),
+                        'changed_at': review.changed_at.strftime('%Y-%m-%d %H:%M') if review.changed_at else '',
+                        'movie_title': review.movie.title if review.movie else '(Фильм не указан)',
+                        'poster_url': review.movie.poster.url if review.movie and hasattr(review.movie.poster, 'url') else '',
+                    }
+                })
+            else:
+                return JsonResponse({'success': True, 'message': 'Изменений не было'})
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors}, status=400)
 
-    html = render_to_string('moviesApp/edit_review_form.html', {'form': form}, request=request)
-    return HttpResponse(html)
+    else:
+        # GET-запрос: возвращаем HTML-форму для модального окна
+        form = ReviewForm(instance=review)
+        html = render_to_string('moviesApp/edit_review_form.html', {'form': form}, request=request)
+        return HttpResponse(html)
 
 
 # УДАЛЕНИЕ ОБСУЖДЕНИЙ
