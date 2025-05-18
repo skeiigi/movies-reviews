@@ -49,7 +49,9 @@
           </button>
       </td>
       <td>
-          <button class="btn btn-danger delete__button" data-id="{{ rv.id }}">Удалить</button>
+          <button class="btn btn-danger delete__button" data-id="{{ rv.id }}" title="Удалить">
+              Удалить
+          </button>
       </td>
     </tr>
 {% endfor %}
@@ -70,6 +72,10 @@
 </div>
 
 <script>
+    const deleteReviewUrl = "{% url 'delete_review' review_id=999999999 %}";
+
+    console.log('deleteReviewUrl:', deleteReviewUrl);
+
     const buttonElems = document.querySelectorAll('.edit__button');
     const modalElem = document.querySelector('.modal');
     const modalContainer = modalElem.querySelector('.modal__container');
@@ -94,6 +100,71 @@
         }
     };
 
+    // Получение CSRF-токена из кук
+    function getCSRFToken() {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            for (let cookie of document.cookie.split(';')) {
+                cookie = cookie.trim();
+                if (cookie.startsWith('csrftoken=')) {
+                    cookieValue = decodeURIComponent(cookie.substring('csrftoken='.length));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Функция удаления статьи
+    const deleteReview = (reviewId) => {
+        const confirmed = confirm('Вы уверены, что хотите удалить статью?');
+        if (!confirmed) return;
+
+        // Формируем правильный URL
+        const url = "{% url 'delete_review' review_id=999999999 %}".replace("999999999", reviewId);
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCSRFToken(),
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.includes("application/json")) {
+                    return response.json();
+                } else {
+                    throw new Error("Получен HTML вместо JSON. Возможно, вы не авторизованы.");
+                }
+            })
+            .then(data => {
+                if (data.success) {
+                    const row = document.querySelector(`tr[data-id="${reviewId}"]`);
+                    if (row) row.remove();
+                    alert('✅ Статья успешно удалена.');
+                } else {
+                    alert(`❌ Ошибка: ${data.error || 'Неизвестная ошибка'}`);
+                }
+            })
+            .catch(err => {
+                console.error('Ошибка:', err);
+                alert(`⚠️ Ошибка: ${err.message}`);
+            });
+    };
+
+    // Навешиваем обработчики на кнопки удаления
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.delete__button').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const reviewId = button.dataset.id;
+                deleteReview(reviewId);
+            });
+        });
+    });
+
     // Открытие и загрузка формы в модальное окно
     const openModal = (reviewId) => {
         fetch(`/review/edit/${reviewId}/`)
@@ -111,7 +182,7 @@
                 // Обработчик отправки формы
                 const editForm = document.querySelector('#edit-review-form');
 
-// Получаем все поля формы
+                // Получаем все поля формы
                 const formFields = {};
                 const initialFormValues = {};
 

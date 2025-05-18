@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.template.loader import render_to_string
 from django.db.models import Prefetch
 
@@ -242,10 +242,41 @@ def edit_review(request, review_id):
 # УДАЛЕНИЕ ОБСУЖДЕНИЙ
 @login_required(login_url='/login/')
 def delete_review(request, review_id):
-    review = get_object_or_404(Reviews, id=review_id)
-    review.removed = True
-    review.save()
-    return redirect("my_reviews")
+    if request.method == 'POST':
+        try:
+            review = Reviews.objects.get(id=review_id, user=request.user)
+            review.removed = True
+            review.save()
+
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'success': True,
+                    'message': 'Статья успешно удалена'
+                })
+
+            # Если обычный запрос — редиректим
+            return JsonResponse({
+                'success': True,
+                'redirect': request.META.get('HTTP_REFERER', '/')
+            })
+
+        except Reviews.DoesNotExist:
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Статья не найдена'
+                }, status=404)
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({
+            'success': False,
+            'error': 'Метод не поддерживается'
+        }, status=405)
+
+    return JsonResponse({
+        'success': False,
+        'error': 'Запрос не поддерживается'
+    }, status=400)
 
 
 # ------------------------КОММЕНТАРИИ------------------------
