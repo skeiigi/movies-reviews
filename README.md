@@ -27,6 +27,7 @@ python src\manage.py migrate
 5. **Load data-file**:
 ~~~bash
 python src\manage.py loaddata moviesApp/fixtures/countries.json
+python src\manage.py loaddata moviesApp/fixtures/movies.json
 ~~~
 
 ### Working!
