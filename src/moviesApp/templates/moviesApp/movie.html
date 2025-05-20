@@ -1,23 +1,64 @@
 {% extends "moviesApp/base.html" %}
 
-{% block title %}
-    {{ movie.title }}
-{% endblock %}
-
+{% block title %}{{ movie.title }}{% endblock %}
 
 {% block content %}
+<a href="{% url 'movies' %}">← Назад к фильмам</a>
 
-<a href="{% url 'movies' %}">Назад к фильмам</a>
-<h1>{{ movie.title }}</h1>
-<p>{{ movie.about }}</p>
+<div class="movie-detail-container">
+    <div class="movie-header">
+        <div class="poster">
+            {% if movie.poster %}
+                <img src="{{ movie.poster.url }}" alt="{{ movie.title }}">
+            {% else %}
+                <p>Постер не найден</p>
+            {% endif %}
+        </div>
 
-{% if movie.poster %}
-<img src="{{ movie.poster.url }}" alt="{{ movie.title }}">
-{% else %}
-<p>Постер к фильму не найден..</p>
-{% endif %}
+        <div class="movie-info">
+            <h1>{{ movie.title }}</h1>
+            <p><strong>Продолжительность:</strong> {{ movie.get_duration }}</p>
+            {% if movie.country_release %}
+                <p><strong>Страна:</strong> {{ movie.country_release }}</p>
+            {% endif %}
+        </div>
+    </div>
 
-<p>Продолжительность фильма: {{ movie.get_duration }}</p>
-<p>Страна производства: {{ movie.country_release }}</p>
+    <div class="movie-description">
+        <h2>Описание</h2>
+        <p>{{ movie.about }}</p>
+    </div>
 
+    <hr>
+
+    <div class="movie-comments">
+        <h2>Комментарии</h2>
+        {% for comment in comments %}
+            <div class="comment" id="comment-{{ comment.id }}">
+                <strong>{{ comment.user.username }}</strong>
+                <span class="date">{{ comment.created_at|date:"d.m.Y H:i" }}</span>
+                <p class="comment-content">{{ comment.content }}</p>
+
+                {% if user == comment.user %}
+                    <button class="edit-comment-btn" data-id="{{ comment.id }}">Редактировать</button>
+                    <button class="delete-comment-btn" data-id="{{ comment.id }}">Удалить</button>
+                {% endif %}
+            </div>
+        {% empty %}
+            <p>Комментариев пока нет.</p>
+        {% endfor %}
+
+        {% if user.is_authenticated %}
+            <form method="post" class="comment-form">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Добавить комментарий</button>
+            </form>
+        {% else %}
+            <p><a href="{% url 'login' %}">Войдите</a>, чтобы оставить комментарий.</p>
+        {% endif %}
+    </div>
+
+    <div id="edit-comment-modal" style="display: none;"></div>
+</div>
 {% endblock %}

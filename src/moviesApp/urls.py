@@ -30,6 +30,10 @@ urlpatterns = [
     path('movie/<int:movie_id>', views.movie_page, name='movie'),
     path('movie/edit/<int:movie_id>/', views.edit_movie, name='edit_movie'),
     path("movie/delete/<int:movie_id>/", views.delete_movie, name="delete_movie"),
+    path("movies/<int:movie_id>/", views.movie_page, name="movie_page"),
+    path("movie-comment/<int:comment_id>/delete/", views.delete_movie_comment, name="delete_movie_comment"),
+    path("movie-comment/<int:comment_id>/edit/", views.edit_movie_comment, name="edit_movie_comment"),
+
 
     # --КОММЕНТАРИИ--
     path('review/<int:review_id>/', views.review_detail, name='review_detail'),

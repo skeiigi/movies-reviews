@@ -1,0 +1,5 @@
+<form method="post" class="edit-movie-comment-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Сохранить</button>
+</form>

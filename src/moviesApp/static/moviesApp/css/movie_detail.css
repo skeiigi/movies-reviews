@@ -1,0 +1,96 @@
+body {
+    background-color: #f5faff; /* очень светлый голубой, приятный для глаз */
+    font-family: 'Segoe UI', sans-serif;
+    color: #222;
+}
+
+a {
+    color: #0072ff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.movie-detail-container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 114, 255, 0.2); /* синий акцент */
+}
+
+.movie-header {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.poster img {
+    width: 220px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 198, 255, 0.3);
+}
+
+.movie-info {
+    flex: 1;
+}
+
+.movie-info h1 {
+    margin-top: 0;
+    color: #0072ff;
+}
+
+.movie-description {
+    margin-top: 30px;
+}
+
+.movie-description h2,
+.movie-comments h2 {
+    color: #00c6ff;
+    border-bottom: 2px solid #00c6ff;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+}
+
+.comment {
+    background-color: #eef7ff;
+    border: 1px solid #cce7ff;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+.comment .date {
+    font-size: 0.85em;
+    color: #555;
+    margin-left: 10px;
+}
+
+.comment-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #b6d8ff;
+    border-radius: 6px;
+    resize: vertical;
+    background: #f8fcff;
+}
+
+.comment-form button {
+    background: linear-gradient(to right, #00c6ff, #0072ff);
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    margin-top: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.comment-form button:hover {
+    background: linear-gradient(to right, #00aaff, #0055cc);
+}
+

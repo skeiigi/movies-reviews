@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django_recaptcha.widgets import ReCaptchaV2Checkbox
 from django_recaptcha.fields import ReCaptchaField
 
-from .models import Movies, Reviews, Comment
+from .models import Movies, Reviews, Comment, MovieComment
 
 
 class LoginForm(AuthenticationForm):
@@ -86,4 +86,12 @@ class CommentForm(forms.ModelForm):
         fields = ['content']
         widgets = {
             'content': forms.Textarea(attrs={'rows': 2, 'placeholder': 'Напишите комментарий...'})
+        }
+
+class MovieCommentForm(forms.ModelForm):
+    class Meta:
+        model = MovieComment
+        fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Оставьте комментарий к фильму...'})
         }

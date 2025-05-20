@@ -6,10 +6,11 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.template.loader import render_to_string
 from django.db.models import Prefetch
+from django.views.decorators.http import require_POST
 
 
-from .models import Movies, Reviews, Comment, Notification
-from .forms import MovieForm, ReviewForm, LoginForm, RegisterForm, CommentForm
+from .models import Movies, Reviews, Comment, Notification, MovieComment
+from .forms import MovieForm, ReviewForm, LoginForm, RegisterForm, CommentForm, MovieCommentForm
 
 
 # ВСПОМОГАТЕЛЬНЫЙ МЕТОД ДЛЯ СКРЫТИЯ СТРАНИЦЫ С АДМИНКОЙ
@@ -160,7 +161,55 @@ def movies_user(request):
 # СТРАНИЦА ОПРЕДЕЛЕННОГО ФИЛЬМА
 def movie_page(request, movie_id):
     movie = get_object_or_404(Movies, id=movie_id)
-    return render(request, "moviesApp/movie.html", {"movie": movie})
+    comments = MovieComment.objects.filter(movie=movie, removed=False).select_related('user')
+    form = MovieCommentForm()
+
+    if request.method == 'POST':
+        if not request.user.is_authenticated:
+            return redirect('login')
+
+        form = MovieCommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.movie = movie
+            comment.save()
+            return redirect('movie_page', movie_id=movie.id)
+        
+    return render(request, "moviesApp/movie.html", {
+        "movie": movie,
+        "comments": comments,
+        "form": form,
+    })
+
+@login_required
+@require_POST
+def delete_movie_comment(request, comment_id):
+    comment = get_object_or_404(MovieComment, id=comment_id, user=request.user)
+    comment.removed = True
+    comment.save()
+    return JsonResponse({'success': True})
+
+
+# Редактирование комментария
+@login_required
+def edit_movie_comment(request, comment_id):
+    comment = get_object_or_404(MovieComment, id=comment_id, user=request.user)
+
+    if request.method == 'POST':
+        form = MovieCommentForm(request.POST, instance=comment)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({
+                'success': True,
+                'new_content': comment.content
+            })
+        return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+
+    # GET-запрос — возвращаем форму
+    form = MovieCommentForm(instance=comment)
+    html = render_to_string('moviesApp/edit_movie_comment_form.html', {'form': form, 'comment': comment}, request=request)
+    return JsonResponse({'html': html})
 
 
 # ------------------------ОБСУЖДЕНИЯ------------------------

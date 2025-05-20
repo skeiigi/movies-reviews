@@ -115,3 +115,96 @@ body {
 .menu-item svg {
   margin-right: 5px;
 }
+
+/*             ЛОГИН               */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+.auth-box {
+    width: 100%;
+    max-width: 400px;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 114, 255, 0.2);
+}
+
+.auth-box h1 {
+    text-align: center;
+    color: #0072ff;
+    margin-bottom: 25px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #b6d8ff;
+    border-radius: 6px;
+    background-color: #f8fcff;
+    font-size: 14px;
+}
+
+.captcha-container {
+    margin: 20px 0;
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 10px;
+    background: linear-gradient(to right, #00c6ff, #0072ff);
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.btn-submit:hover {
+    background: linear-gradient(to right, #00aaff, #0055cc);
+}
+
+.form-footer {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.form-footer a {
+    color: #0072ff;
+    text-decoration: none;
+}
+
+.form-footer a:hover {
+    text-decoration: underline;
+}
+
+.messages {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 20px;
+}
+
+.message {
+    background-color: #ffe0e0;
+    color: #a20000;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+

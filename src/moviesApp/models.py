@@ -74,3 +74,15 @@ class Notification(models.Model):
 
     def __str__(self):
         return f'Уведомление для {self.recipient.username}'
+    
+class MovieComment(models.Model):
+    movie = models.ForeignKey(Movies, on_delete=models.CASCADE, related_name='movie_comments')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    removed = models.BooleanField(default=False)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'Комментарий от {self.user.username} к фильму {self.movie.title}'
+
