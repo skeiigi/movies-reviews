@@ -148,7 +148,7 @@ def delete_movie(request, movie_id):
     movie = get_object_or_404(Movies, id=movie_id)
     movie.removed = True
     movie.save()
-    return redirect("movies")
+    return redirect("admin_movies")
 
 
 # СПИСОК ФИЛЬМОВ
