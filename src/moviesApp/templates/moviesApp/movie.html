@@ -17,6 +17,7 @@
 
         <div class="movie-info">
             <h1>{{ movie.title }}</h1>
+            <p><strong>Год производства:</strong> {{ movie.year_of_release }}</p>
             <p><strong>Продолжительность:</strong> {{ movie.get_duration }}</p>
             {% if movie.country_release %}
                 <p><strong>Страна:</strong> {{ movie.country_release }}</p>

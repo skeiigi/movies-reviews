@@ -25,7 +25,9 @@
                 <th>Описание</th>
                 <th>Последнее изменение</th>
                 <th>Продолжительность фильма</th>
+                <th>Год производства</th>
                 <th>Страна производства</th>
+                <th>Удалено</th>
             </tr>
         </thead>
         <tbody>
@@ -42,7 +44,9 @@
                         <td>{{ mo.about }}</td>
                         <td>{{ mo.changed_at }}</td>
                         <td>{{ mo.get_duration }}</td>
+                        <td>{{ mo.year_of_release }}</td>
                         <td>{{ mo.country_release }}</td>
+                        <td>{{ mo.removed }}</td>
                         {% if user.is_authenticated %}
                         <td>
                             <button class="edit__button"
