@@ -14,25 +14,116 @@
 {% endif %}
 
 <h1 style="text-align: center;">Фильмы</h1>
-{% if movies %}
-    <table>
-        <tbody>
-            {% for mo in movies %}
-                <tr>
-                    <td>
-                      {% if mo.poster %}
-                        <img src="{{ mo.poster.url }}" alt="{{ mo.title }}">
-                      {% else %}
-                        <span>(Постер к фильму не найден)</span>
-                      {% endif %}
-                    </td>
-                    <td><a href="{% url 'movie' mo.id %}">{{ mo.title }}</a></td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-            {% else %}
-                <h4>Фильмов нет...</h4>
-            {% endif %}
+
+<!-- Поле поиска -->
+<div style="text-align:center; margin-bottom: 20px;">
+    <input type="text" id="search-input" placeholder="Поиск по названию..." />
+</div>
+
+<!-- Контейнер для результатов поиска -->
+<div id="search-results" style="display: flex; flex-wrap: wrap; justify-content: center;"></div>
+
+<div id="default-movies">
+    {% if movies %}
+        <table>
+            <tbody>
+                {% for mo in movies %}
+                    <tr>
+                        <td>
+                          {% if mo.poster %}
+                            <img src="{{ mo.poster.url }}" alt="{{ mo.title }}">
+                          {% else %}
+                            <span>(Постер к фильму не найден)</span>
+                          {% endif %}
+                        </td>
+                        <td><a href="{% url 'movie' mo.id %}">{{ mo.title }}</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <h4>Фильмов нет...</h4>
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const input = document.getElementById('search-input');
+    const results = document.getElementById('search-results');
+    const defaultMovies = document.getElementById('default-movies');
+
+    let timeoutId;
+
+    input.addEventListener('input', function () {
+        const query = this.value.trim();
+
+        clearTimeout(timeoutId);
+
+        if (query.length === 0) {
+            timeoutId = setTimeout(() => {
+                results.innerHTML = '';
+                defaultMovies.style.display = 'block';
+            }, 200);
+            return;
+        }
+
+        defaultMovies.style.display = 'none';
+
+        timeoutId = setTimeout(() => {
+            fetch(`{% url 'search_movies' %}?q=` + encodeURIComponent(query))
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Ошибка сети');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    results.innerHTML = '';
+
+                    if (data.length === 0) {
+                        results.innerHTML = '<p>Фильмы не найдены</p>';
+                        return;
+                    }
+
+                    // Создаем таблицу
+                    const table = document.createElement('table');
+                    const tbody = document.createElement('tbody');
+
+                    data.forEach(movie => {
+                        const tr = document.createElement('tr');
+
+                        const tdImage = document.createElement('td');
+                        if (movie.poster) {
+                            const img = document.createElement('img');
+                            img.src = movie.poster;
+                            img.alt = movie.title;
+                            img.width = 150;
+                            tdImage.appendChild(img);
+                        } else {
+                            tdImage.textContent = 'Постер не найден';
+                        }
+
+                        const tdTitle = document.createElement('td');
+                        const link = document.createElement('a');
+                        link.href = movie.url;
+                        link.textContent = movie.title;
+                        tdTitle.appendChild(link);
+
+                        tr.appendChild(tdImage);
+                        tr.appendChild(tdTitle);
+                        tbody.appendChild(tr);
+                    });
+
+                    table.appendChild(tbody);
+                    results.appendChild(table);
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    results.innerHTML = '<p>Произошла ошибка при загрузке фильмов</p>';
+                });
+        }, 300); // задержка перед отправкой запроса
+    });
+});
+</script>
 
 {% endblock %}

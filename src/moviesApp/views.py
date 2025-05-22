@@ -158,6 +158,30 @@ def movies_user(request):
     return render(request, "moviesApp/movies_page.html", {"movies": movies_list})
 
 
+# ПОИСК ФИЛЬМОВ
+def search_movies(request):
+    query = request.GET.get('q', '').strip().lower()  # ← приводим запрос к нижнему регистру
+
+    if query:
+        movies = Movies.objects.filter(removed=False)
+        matched_movies = []
+        for movie in movies:
+            if query in movie.title.lower():  # ← сравниваем в нижнем регистре
+                matched_movies.append(movie)
+    else:
+        matched_movies = Movies.objects.filter(removed=False)[:10]
+
+    results = []
+    for movie in matched_movies:
+        results.append({
+            'title': movie.title,
+            'url': f"/movie/{movie.id}/",
+            'poster': movie.poster.url if movie.poster else None
+        })
+
+    return JsonResponse(results, safe=False)
+
+
 # СТРАНИЦА ОПРЕДЕЛЕННОГО ФИЛЬМА
 def movie_page(request, movie_id):
     movie = get_object_or_404(Movies, id=movie_id)
