@@ -29,6 +29,7 @@ urlpatterns = [
     path('movies/', views.movies_user, name="movies"),
     path('search/', views.search_movies, name='search_movies'),
     path('movie/<int:movie_id>', views.movie_page, name='movie'),
+    path('movie/<int:movie_id>/', views.movie_page, name='movie'),
     path('movie/edit/<int:movie_id>/', views.edit_movie, name='edit_movie'),
     path("movie/delete/<int:movie_id>/", views.delete_movie, name="delete_movie"),
     path("movies/<int:movie_id>/", views.movie_page, name="movie_page"),
