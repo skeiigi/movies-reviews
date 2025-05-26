@@ -4,33 +4,30 @@
     {{ user.username }}
 {% endblock %}
 
-
 {% block content %}
-{% if request.user.is_authenticated and request.user.id == user.id %}
-<h1>Ваш профиль, {{ user.username }}</h1>
-{% else %}
-<h1>Профиль пользователя {{ user.username }}</h1>
-{% endif %}
+<div class="auth-container">
+    <div class="auth-box profile-box">
+        {% if request.user.is_authenticated and request.user.id == user.id %}
+            <h1>Ваш профиль, {{ user.username }}</h1>
+        {% else %}
+            <h1>Профиль пользователя {{ user.username }}</h1>
+        {% endif %}
 
-<h2>Статистика пользователя: </h2>
-<p>Написано статей: {{ review_count }}</p>
-<p>Написано комментариев: {{ comment_count }}</p>
+        <h2>Статистика пользователя</h2>
+        <p>Написано статей: <strong>{{ review_count }}</strong></p>
+        <p>Написано комментариев: <strong>{{ comment_count }}</strong></p>
 
-<a href="{% url 'movies' %}">Фильмы</a><br><br>
-<a href="{% url 'reviews' %}">Обсуждения</a><br><br>
+        {% if request.user.is_authenticated and request.user.id == user.id %}
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-submit">Выйти из системы</button>
+            </form>
+        {% endif %}
 
-<br>
-
-{% if request.user.is_authenticated %}
-<form method="post" action="{% url 'logout' %}">
-    {% csrf_token %}
-    <button type="submit">Выйти из системы</button>
-</form>
-{% endif %}
-
-{% if request.user.is_authenticated and request.user.id == user.id and request.user.is_staff %}
-<h2>Админская панель</h2>
-<a href="{% url 'admin_movies' %}">Фильмы</a>
-{% endif %}
-
+        {% if request.user.is_authenticated and request.user.id == user.id and request.user.is_staff %}
+            <h2>Админская панель</h2>
+            <a href="{% url 'admin_movies' %}" class="card-button">Фильмы</a>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

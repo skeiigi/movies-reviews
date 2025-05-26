@@ -6,6 +6,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.template.loader import render_to_string
 from django.db.models import Prefetch
+from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_POST
 
 
@@ -152,6 +153,7 @@ def delete_movie(request, movie_id):
 
 
 # СПИСОК ФИЛЬМОВ
+@cache_page(60 * 60)
 def movies_user(request):
     movies_list = Movies.objects.filter(removed=False)
 

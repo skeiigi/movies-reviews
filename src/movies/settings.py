@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'moviesApp',
     'django_recaptcha',
+    'sass_processor'
 ]
 
 LOGIN_URL = '/login/'

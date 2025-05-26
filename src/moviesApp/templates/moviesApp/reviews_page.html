@@ -7,12 +7,24 @@
 
 {% block content %}
 {% if user.is_authenticated %}
-    <a href="{% url 'profile' %}">Назад</a>
-    <p>Имя {{ user.username}}</p>
     <a href="{% url 'my_reviews' %}">Мои обсуждения</a>
 {% else %}
     <a href="{% url 'home' %}">Назад</a>
 {% endif %}
+
+
+{% if user.is_authenticated %}
+<div style="text-align: center;">
+<h1>Добавить новое обсуждение</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Сохранить</button>
+</form>
+{% else %}
+    <h3 style="text-align: center;"><a href="{% url 'login' %}">Авторизуйтесь</a>, чтобы обсуждать фильмы</h3>
+{% endif %}
+</div>
 
 
 {% if reviews %}
@@ -32,7 +44,13 @@
 
 {% for rv in reviews %}
     <tr>
-        <td>{{ rv.user.username|default:"DELETED" }}</td>
+        <td>
+        {% if rv.user %}
+            <a href="{% url 'user_profile' rv.user.id %}">{{ rv.user.username }}</a>
+        {% else %}
+            DELETED
+        {% endif %}
+        </td>
         <td>{{rv.title}}</td>
         <td>
         {% if rv.movie %}
@@ -63,18 +81,5 @@
 {% else %}
 <h1>Пока нет обсуждений...</h1>
 {% endif %}
-
-{% if user.is_authenticated %}
-<div style="text-align: center;">
-<h1>Добавить новое обсуждение</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Сохранить</button>
-</form>
-{% else %}
-    <h3 style="text-align: center;"><a href="{% url 'login' %}">Авторизуйтесь</a>, чтобы обсуждать фильмы</h3>
-{% endif %}
-</div>
 
 {% endblock %}
