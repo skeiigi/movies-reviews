@@ -81,6 +81,8 @@ def auth_register(request):
             user = form.save()
             login(request, user)
             return redirect("profile")
+        else:
+            messages.error(request, "Введите данные корректно.")
     else:
         form = RegisterForm()
     return render(request, "moviesApp/register.html", {"form": form})

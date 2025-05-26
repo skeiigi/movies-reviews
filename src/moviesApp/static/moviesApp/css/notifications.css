@@ -1,31 +1,36 @@
-#notification-dropdown {
-  background-color: white !important;
-  color: black !important;
-  padding: 10px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  max-height: 400px;
-  overflow-y: auto;
-  font-size: 14px;
-  font-family: Arial, sans-serif;
-  line-height: 1.4;
+.notification-dropdown {
+    position: absolute;
+    right: 20px;
+    top: 60px; /* Отступ под иконкой */
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: none;
+    padding: 10px;
+    font-size: 14px;
+    color: #333;
 }
 
-#notification-dropdown ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.notification-dropdown ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-#notification-dropdown ul li {
-  padding: 8px 10px;
-  border-bottom: 1px solid #eee;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.notification-dropdown ul li {
+    padding: 8px 10px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-#notification-dropdown ul li:hover {
-  background-color: #f0f0f0;
+.notification-dropdown ul li:hover {
+    background-color: #f0f0f0;
 }
 
 #notification-dropdown p {
@@ -49,10 +54,12 @@
   background-color: #0056b3;
 }
 
+
 /* Стили для сообщения о пустых уведомлениях */
-#notification-dropdown .empty-message {
-  padding: 15px;
-  text-align: center;
-  color: #555;
-  font-style: italic;
+
+.notification-dropdown .empty-message {
+    text-align: center;
+    padding: 10px;
+    color: #999;
+    font-style: italic;
 }

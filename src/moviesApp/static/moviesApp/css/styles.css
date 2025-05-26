@@ -61,28 +61,82 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  /* background-color: #97a8b5; ------ здесь цвет фона всех страниц */
+  padding-top: 50px;
 }
 
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 20px;
-  background: linear-gradient(to right, #00c4b6, #3e64ff);
-  color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background: linear-gradient(to right, #00c4b6, #3e64ff);
+    color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .logo a {
-  font-size: 24px;
-  font-weight: bold;
-  color: white;
-  text-decoration: none;
-  transition: opacity 0.3s ease;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+.logo a:hover {
+    opacity: 0.8;
 }
 
-.logo a:hover {
-  opacity: 0.8;
+.burger {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+@media (max-width: 768px) {
+    .burger {
+        display: block;
+    }
+
+    .menu {
+        position: fixed;
+        top: 50px;
+        left: -100%;
+        flex-direction: column;
+        background-color: #00c4b6;
+        width: 100%;
+        height: calc(100vh - 50px);
+        padding-top: 20px;
+        transition: left 0.3s ease;
+        z-index: 1000;
+    }
+
+    .menu.open {
+        left: 0;
+    }
+
+    .menu-item {
+        margin: 10px 0;
+        justify-content: center;
+        font-size: 18px;
+    }
+
+    .menu-item i {
+        margin-right: 10px;
+    }
+
+    .right-items {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
 }
 
 .menu {
@@ -120,17 +174,20 @@ body {
 .auth-container {
     display: flex;
     justify-content: center;
-    align-items: center;
-    padding: 40px 20px;
+    align-items: flex-start; /* Прижимаем к верху */
+    padding-top: 40px; /* Отступ от хедера */
+    min-height: calc(100vh - 50px); /* Полная высота без хедера */
+    background-color: #f4f4f4; /* Легкий фон */
 }
 
 .auth-box {
     width: 100%;
-    max-width: 400px;
+    max-width: 400px; /* <-- максимальная ширина */
     background: #ffffff;
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 114, 255, 0.2);
+    box-sizing: border-box;
 }
 
 .auth-box h1 {
@@ -161,6 +218,7 @@ body {
 
 .captcha-container {
     margin: 20px 0;
+    align: center;
 }
 
 .btn-submit {
@@ -207,4 +265,257 @@ body {
     border-radius: 6px;
 }
 
+.search-container {
+    display: flex;
+    align-items: center;
+    margin: 20px auto; /* Центрируем и добавляем отступы */
+    max-width: 600px; /* Максимальная ширина контейнера */
+}
 
+#search-input {
+    width: 100%;
+    max-width: 600px;
+    padding: 12px 20px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 30px;
+    outline: none;
+    margin: 20px auto;
+    display: block;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+/* Эффект при наведении */
+#search-input:hover {
+    border-color: #888;
+}
+
+/* При фокусе на поле */
+#search-input:focus {
+    border-color: #3e64ff;
+    box-shadow: 0 0 5px rgba(62, 100, 255, 0.5);
+}
+
+.card-button {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    text-align: center;
+    text-decoration: none;
+    color: white;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #00c4b6, #3e64ff);
+    box-shadow: 0 6px 16px rgba(0, 114, 255, 0.2);
+    transition: all 0.3s ease;
+    font-size: 20px;
+    font-weight: bold;
+    min-height: 160px;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-button::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+    transform: rotate(25deg);
+    pointer-events: none;
+}
+
+.card-button:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 114, 255, 0.3);
+    background: linear-gradient(135deg, #00aaff, #0055cc);
+}
+
+/* === Главный контейнер страницы === */
+.has-header-offset {
+    padding-top: 100px;
+    background-color: #f4f4f4;
+}
+
+.home-container {
+    min-height: calc(100vh - 50px - 60px); /* Вычитаем отступ сверху */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    background-color: #f4f4f4;
+    margin-top: 60px;
+}
+
+/* === Контейнер для кнопок === */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    width: 100%;
+    max-width: 1000px;
+    margin-top: 30px; /* Отступ от заголовка */
+}
+
+/* === Стиль для заголовка === */
+.hero-title {
+    font-size: 36px;
+    font-weight: bold;
+    color: #0072ff;
+    text-align: center; /* Убедимся, что текст по центру */
+    margin-top: -200px;
+    margin-bottom: 30px;
+    padding: 0 20px;
+    position: relative;
+}
+
+.hero-title::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(to right, #00c4b6, #3e64ff);
+    margin: 15px auto 0;
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+.hero-title:hover::after {
+    width: 120px;
+}
+
+/* ================= */
+/* === Mobile First === */
+/* ================= */
+
+/* === Общие стили для всех экранов === */
+
+* {
+    box-sizing: border-box;
+}
+
+/* === Хедер на мобильных устройствах === */
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px;
+    }
+
+    .menu {
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-top: 10px;
+    }
+
+    .right-items {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .logo a {
+        font-size: 20px;
+    }
+
+    .menu-item,
+    .menu-item svg {
+        font-size: 16px;
+    }
+}
+
+.form-group input,
+#search-input {
+    font-size: 14px;
+}
+
+/* === Кнопки на главной странице === */
+
+.card-button {
+    min-height: 120px;
+    padding: 30px 10px;
+    font-size: 18px;
+}
+
+/* === Поиск === */
+
+.search-container {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+#search-input {
+    width: 100%;
+    max-width: 100%;
+}
+
+/* === Dropdown уведомлений === */
+
+#notification-dropdown {
+    max-height: 300px;
+    font-size: 13px;
+}
+
+/* === Профиль пользователя === */
+
+.profile-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Прижимаем к верху */
+    padding-top: 30px; /* Отступ от хедера */
+    min-height: calc(100vh - 50px); /* Полная высота без хедера */
+    background-color: #f4f4f4; /* Легкий фон */
+}
+
+.profile-box {
+    width: 100%;
+    max-width: 500px; /* <-- фиксируем максимальную ширину */
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 114, 255, 0.2);
+    text-align: left; /* Текст слева */
+    box-sizing: border-box;
+}
+
+.profile-box h1,
+.profile-box h2 {
+    color: #0072ff;
+    margin-bottom: 20px;
+    text-align: center; /* Заголовки по центру */
+}
+
+.profile-box p {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.profile-links {
+    flex-direction: column;
+}
+
+@media (max-width: 500px) {
+    .profile-box {
+        max-width: 90%; /* На мобильных — чуть больше */
+        padding: 20px; /* Уменьшаем отступы */
+    }
+
+    .profile-box h1 {
+        font-size: 24px; /* Уменьшаем заголовок */
+    }
+
+    .profile-box p {
+        font-size: 14px; /* Уменьшаем текст */
+    }
+}
+
+/* === Отступ под фиксированную шапку === */
+.has-header-offset {
+    padding-top: 60px; /* Высота хедера + небольшой запас */
+}

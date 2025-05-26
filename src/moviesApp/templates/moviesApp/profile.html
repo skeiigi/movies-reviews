@@ -5,8 +5,8 @@
 {% endblock %}
 
 {% block content %}
-<div class="auth-container">
-    <div class="auth-box profile-box">
+<div class="profile-container">
+    <div class="profile-box">
         {% if request.user.is_authenticated and request.user.id == user.id %}
             <h1>Ваш профиль, {{ user.username }}</h1>
         {% else %}
