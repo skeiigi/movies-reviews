@@ -37,6 +37,7 @@ a:hover {
 
 .movie-info {
     flex: 1;
+    text-align: left;
 }
 
 .movie-info h1 {

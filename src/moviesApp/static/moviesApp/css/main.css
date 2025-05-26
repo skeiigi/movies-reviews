@@ -369,7 +369,7 @@ body {
 }
 
 .movie-header {
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   text-align: center;
 }
@@ -380,7 +380,7 @@ body {
 }
 
 .movie-info {
-  margin-top: 20px;
+  text-align: left;
 }
 
 #notification-dropdown {
