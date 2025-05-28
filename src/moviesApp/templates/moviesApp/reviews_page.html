@@ -1,85 +1,74 @@
 {% extends "moviesApp/base.html" %}
+{% load static %}
+{% load sass_tags %}
 
-{% block title %}
-    Обсуждения
+{% block title %}Обсуждения{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% sass_src 'moviesApp/scss/discussions.scss' %}">
 {% endblock %}
 
-
 {% block content %}
-{% if user.is_authenticated %}
+<div class="page-container">
+  <h2 class="section-title">Обсуждения</h2>
+
+  {% if user.is_authenticated %}
     <a href="{% url 'my_reviews' %}">Мои обсуждения</a>
-{% else %}
-    <a href="{% url 'home' %}">Назад</a>
-{% endif %}
+    <div style="text-align: center; margin: 30px 0;">
+      <h3>Добавить новое обсуждение</h3>
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Сохранить</button>
+      </form>
+    </div>
+  {% else %}
+    <p><a href="{% url 'home' %}">← Назад</a></p>
+    <h3 style="text-align: center;">
+      <a href="{% url 'login' %}">Авторизуйтесь</a>, чтобы обсуждать фильмы
+    </h3>
+  {% endif %}
 
-
-{% if user.is_authenticated %}
-<div style="text-align: center;">
-<h1>Добавить новое обсуждение</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Сохранить</button>
-</form>
-{% else %}
-    <h3 style="text-align: center;"><a href="{% url 'login' %}">Авторизуйтесь</a>, чтобы обсуждать фильмы</h3>
-{% endif %}
-</div>
-
-
-{% if reviews %}
-<table>
-  <thead>
-    <tr>
-      <th>Автор</th>
-      <th>Тема</th>
-      <th>Фильм</th>
-      <th>Дата написания</th>
-      <th>Последнее изменение</th>
-      <th>Контент</th>
-      <th>Комментарии</th>
-    </tr>
-  </thead>
-  <tbody>
-
-{% for rv in reviews %}
-    <tr>
-        <td>
-        {% if rv.user %}
-            <a href="{% url 'user_profile' rv.user.id %}">{{ rv.user.username }}</a>
-        {% else %}
-            DELETED
-        {% endif %}
-        </td>
-        <td>{{rv.title}}</td>
-        <td>
-        {% if rv.movie %}
-          {% if rv.movie.poster %}
-              <div style="display: flex; align-items: center;">
-                <img src="{{ rv.movie.poster.url }}" alt="{{ rv.movie.title }}" style="width: 100px; height: auto; margin-right: 10px;">
-                <span><a href="{% url 'movie' rv.movie.id %}">{{ rv.movie.title }}</a></span>
-              </div>
+  {% if reviews %}
+    {% for rv in reviews %}
+      <div class="review-card">
+        <div class="meta">
+          {% if rv.user %}
+            Автор: <a href="{% url 'user_profile' rv.user.id %}">{{ rv.user.username }}</a>
           {% else %}
-            <span>(Постер к фильму не найден)</span>
+            Автор: <em>Удалён</em>
           {% endif %}
+          | {{ rv.created_at|date:"d.m.Y H:i" }}
+        </div>
 
+        <div class="content">
+          <strong>{{ rv.title }}</strong><br>
+          {{ rv.content|truncatewords:30 }}
+        </div>
 
+        {% if rv.movie %}
+          <a class="film-link" href="{% url 'movie' rv.movie.id %}">
+            {% if rv.movie.poster %}
+              <img src="{{ rv.movie.poster.url }}" alt="{{ rv.movie.title }}"
+                   style="max-width: 120px; border-radius: 6px; display: block; margin-top: 10px;">
+            {% endif %}
+            {{ rv.movie.title }}
+          </a>
         {% else %}
-          <span>(Фильм не указан)</span>
+          <div class="meta" style="margin-top: 10px;">
+            Фильм не указан
+          </div>
         {% endif %}
-      </td>
-      <td>{{ rv.created_at }}</td>
-      <td>{{rv.changed_at}}</td>
-      <td>{{rv.content}}</td>
-      <td><a href="{% url 'review_detail' rv.id %}">Перейти</a></td>
-    </tr>
-{% endfor %}
 
-  </tbody>
-</table>
+        <div style="margin-top: 10px;">
+          Последнее изменение: {{ rv.changed_at|date:"d.m.Y H:i" }}
+        </div>
 
-{% else %}
-<h1>Пока нет обсуждений...</h1>
-{% endif %}
-
+        <a href="{% url 'review_detail' rv.id %}" class="film-link">Перейти к обсуждению</a>
+      </div>
+    {% endfor %}
+  {% else %}
+    <h3 style="text-align: center;">Пока нет обсуждений...</h3>
+  {% endif %}
+</div>
 {% endblock %}

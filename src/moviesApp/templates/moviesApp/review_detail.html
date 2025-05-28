@@ -1,80 +1,101 @@
-{% extends 'moviesApp/index.html' %}
+{% extends 'moviesApp/base.html' %}
+{% load static %}
+{% load sass_tags %}
+
+{% block title %}Обсуждение: {{ review.title }}{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% sass_src 'moviesApp/scss/discussions.scss' %}">
+{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="page-container">
   <a href="{% url 'reviews' %}">← Назад к обсуждениям</a>
 
-  <h2>{{ review.title }}</h2>
+  <h2 class="section-title">{{ review.title }}</h2>
+
   {% if review.movie %}
-    <div style="display: flex; align-items: center;">
+    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
       {% if review.movie.poster %}
-        <img src="{{ review.movie.poster.url }}" alt="{{ review.movie.title }}" style="width: 120px; height: auto; margin-right: 10px;">
+        <img src="{{ review.movie.poster.url }}" alt="{{ review.movie.title }}" style="max-width: 120px; border-radius: 6px;">
       {% endif %}
-      <p><strong>Фильм:</strong> {{ review.movie.title }}</p>
+      <p><strong>Фильм:</strong>
+        <a href="{% url 'movie' review.movie.id %}" class="film-link">{{ review.movie.title }}</a>
+      </p>
     </div>
   {% else %}
     <p><strong>Фильм:</strong> (не указан)</p>
   {% endif %}
-  <p>{{ review.content }}</p>
-  <hr>
 
-  <h4>Комментарии</h4>
+  <div class="review-card">
+    <div class="meta">
+      Автор: {{ review.user.username }} |
+      Создано: {{ review.created_at|date:"d.m.Y H:i" }} |
+      Изменено: {{ review.changed_at|date:"d.m.Y H:i" }}
+    </div>
+    <div class="content">
+      {{ review.content|linebreaks }}
+    </div>
+  </div>
+
+  <h3>Комментарии</h3>
 
   {% for comment in comments %}
-    <div style="margin-bottom: 1rem; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+    <div class="comment">
       {% if comment.removed %}
-        <p><em>Комментарий удалён.</em></p>
+        <em>Комментарий удалён.</em>
       {% else %}
-        <strong><a href="{% url 'user_profile' comment.user.id %}">{{ comment.user.username }}</a></strong>: {{ comment.content }}
-        <p><small>Добавлено: {{ comment.created_at|date:"d M Y, H:i" }}</small></p>
-        <p><small>Последнее изменение: {{ comment.updated_at|date:"d M Y, H:i" }}</small></p>
+        <strong><a href="{% url 'user_profile' comment.user.id %}">{{ comment.user.username }}</a></strong>:
+        {{ comment.content }}
+        <div class="date">Добавлено: {{ comment.created_at|date:"d.m.Y H:i" }},
+          изменено: {{ comment.updated_at|date:"d.m.Y H:i" }}</div>
+
         {% if user == comment.user %}
-          <div style="margin-top: 5px;">
-            <form method="post" action="{% url 'edit_comment' comment.id %}" style="display: inline;">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-danger">Редактировать</button>
-            </form> |
-            <form method="post" action="{% url 'delete_comment' comment.id %}" style="display: inline;">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены, что хотите удалить комментарий?');">Удалить</button>
-            </form>
-          </div>
+          <form method="post" action="{% url 'edit_comment' comment.id %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit">Редактировать</button>
+          </form>
+          |
+          <form method="post" action="{% url 'delete_comment' comment.id %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" onclick="return confirm('Удалить комментарий?')">Удалить</button>
+          </form>
         {% endif %}
       {% endif %}
 
       {% if comment.filtered_replies %}
-        <button class="toggle-replies btn btn-sm btn-secondary" data-comment-id="{{ comment.id }}" style="margin-top: 8px;">Показать ответы</button>
+        <button class="toggle-replies" data-comment-id="{{ comment.id }}" style="margin-top: 5px;">Показать ответы</button>
       {% endif %}
 
-      <!-- Ответы (всегда показываем, даже если родитель удалён) -->
-      <div id = "replies-{{ comment.id }}" style="display: none; margin-top: 10px;">
+      <div id="replies-{{ comment.id }}" style="display: none; margin-top: 10px;">
         {% for reply in comment.filtered_replies %}
-          <div style="margin-left: 20px; margin-top: 5px; padding: 8px; background: #f9f9f9; border-radius: 5px;">
+          <div class="comment" style="margin-left: 20px;">
             {% if reply.removed %}
-              <p><em>Комментарий удалён.</em></p>
+              <em>Комментарий удалён.</em>
             {% else %}
-              <strong><a href="{% url 'user_profile' reply.user.id %}">{{ reply.user.username }}</a></strong>: {{ reply.content }}
-              <p><small>Добавлено: {{ reply.created_at|date:"d M Y, H:i" }}</small></p>
-              <p><small>Последнее изменение: {{ reply.updated_at|date:"d M Y, H:i" }}</small></p>
+              <strong><a href="{% url 'user_profile' reply.user.id %}">{{ reply.user.username }}</a></strong>:
+              {{ reply.content }}
+              <div class="date">Добавлено: {{ reply.created_at|date:"d.m.Y H:i" }},
+                изменено: {{ reply.updated_at|date:"d.m.Y H:i" }}</div>
+
               {% if user == reply.user %}
-                <div style="margin-left: 25px; margin-top: 3px;">
-                  <form method="post" action="{% url 'edit_comment' reply.id %}" style="display: inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">Редактировать</button>
-                  </form> |
-                  <form method="post" action="{% url 'delete_comment' reply.id %}" style="display: inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены, что хотите удалить комментарий?');">Удалить</button>
-                  </form>
-                </div>
+                <form method="post" action="{% url 'edit_comment' reply.id %}" style="display: inline;">
+                  {% csrf_token %}
+                  <button type="submit">Редактировать</button>
+                </form>
+                |
+                <form method="post" action="{% url 'delete_comment' reply.id %}" style="display: inline;">
+                  {% csrf_token %}
+                  <button type="submit" onclick="return confirm('Удалить ответ?')">Удалить</button>
+                </form>
               {% endif %}
             {% endif %}
           </div>
         {% endfor %}
       </div>
-      <!-- Форма ответа (только если родитель не удалён) -->
+
       {% if user.is_authenticated and not comment.removed %}
-        <form method="post" action="{% url 'reply_comment' review.id comment.id %}">
+        <form method="post" action="{% url 'reply_comment' review.id comment.id %}" class="comment-form">
           {% csrf_token %}
           {{ form.as_p }}
           <button type="submit">Ответить</button>
@@ -86,15 +107,16 @@
   {% endfor %}
 
   <hr>
-  <h5>Оставить комментарий:</h5>
+  <h4>Оставить комментарий:</h4>
+
   {% if user.is_authenticated %}
-    <form method="post" action="{% url 'add_comment' review.id %}">
+    <form method="post" action="{% url 'add_comment' review.id %}" class="comment-form">
       {% csrf_token %}
       {{ form.as_p }}
       <button type="submit">Добавить комментарий</button>
     </form>
   {% else %}
-    <p>Чтобы оставлять комментарии, <a href="{% url 'login' %}">войдите в аккаунт</a>.</p>
+    <p><a href="{% url 'login' %}">Войдите</a>, чтобы оставить комментарий.</p>
   {% endif %}
 </div>
 {% endblock %}

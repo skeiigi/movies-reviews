@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{% static 'moviesApp/fontawesome/css/all.min.css' %}">
     <link rel="stylesheet" href="{% static 'moviesApp/css/notifications.css' %}">
     <link rel="stylesheet" href="{% static 'moviesApp/css/movie_detail.css' %}">
+    {% block extra_head %}{% endblock %}
 </head>
 <body>
 {% include "moviesApp/header.html" %}

@@ -1,0 +1,72 @@
+.page-container {
+  max-width: 1100px;
+  margin: 30px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 114, 255, 0.1);
+  color: #222;
+  font-family: 'Segoe UI', sans-serif; }
+
+.section-title {
+  font-size: 24px;
+  color: #0072ff;
+  border-bottom: 2px solid #00c6ff;
+  padding-bottom: 8px;
+  margin-bottom: 20px; }
+
+.film-card-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: flex-start; }
+
+.film-card {
+  background: #f5faff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 114, 255, 0.1);
+  width: 200px;
+  overflow: hidden;
+  text-align: center;
+  transition: transform 0.2s ease; }
+  .film-card:hover {
+    transform: scale(1.03); }
+  .film-card img {
+    width: 100%;
+    height: auto; }
+  .film-card .title {
+    padding: 10px;
+    font-weight: bold;
+    color: #0072ff; }
+
+.review-card {
+  background: #f5faff;
+  padding: 15px 20px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  border-left: 5px solid #0072ff; }
+  .review-card .meta {
+    font-size: 0.85rem;
+    color: #555;
+    margin-bottom: 8px; }
+  .review-card .content {
+    font-size: 1rem; }
+  .review-card a.film-link {
+    display: inline-block;
+    margin-top: 8px;
+    color: #00c6ff;
+    font-weight: 500; }
+    .review-card a.film-link:hover {
+      text-decoration: underline; }
+
+@media (max-width: 768px) {
+  .film-card-list {
+    justify-content: center; }
+  .film-card {
+    width: 90%; }
+  .review-card {
+    padding: 10px; }
+  .section-title {
+    font-size: 20px; } }
+
+/*# sourceMappingURL=discussions.css.map */

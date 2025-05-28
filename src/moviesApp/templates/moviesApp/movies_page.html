@@ -1,39 +1,43 @@
 {% extends "moviesApp/base.html" %}
+{% load static %}
+{% load sass_tags %}
 
 {% block title %}
     Фильмы
 {% endblock %}
 
-{% block content %}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% sass_src 'moviesApp/scss/discussions.scss' %}">
+{% endblock %}
 
+{% block content %}
 <h1 style="text-align: center;">Фильмы</h1>
 
-<!-- Поле поиска -->
+<!-- Поисковая строка -->
 <div class="search-container">
     <input type="text" id="search-input" placeholder="Поиск по названию..." />
 </div>
 
 <!-- Контейнер для результатов поиска -->
-<div id="search-results" style="display: flex; flex-wrap: wrap; justify-content: center;"></div>
+<div id="search-results" class="film-card-list"></div>
 
+<!-- Основной список фильмов -->
 <div id="default-movies">
     {% if movies %}
-        <table>
-            <tbody>
-                {% for mo in movies %}
-                    <tr>
-                        <td>
-                          {% if mo.poster %}
+        <div class="film-card-list">
+            {% for mo in movies %}
+                <div class="film-card">
+                    <a href="{% url 'movie' mo.id %}">
+                        {% if mo.poster %}
                             <img src="{{ mo.poster.url }}" alt="{{ mo.title }}">
-                          {% else %}
-                            <span>(Постер к фильму не найден)</span>
-                          {% endif %}
-                        </td>
-                        <td><a href="{% url 'movie' mo.id %}">{{ mo.title }}</a></td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                        {% else %}
+                            <div class="title">(Постер не найден)</div>
+                        {% endif %}
+                        <div class="title">{{ mo.title }}</div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
     {% else %}
         <h4>Фильмов нет...</h4>
     {% endif %}
@@ -44,17 +48,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const input = document.getElementById('search-input');
     const results = document.getElementById('search-results');
     const defaultMovies = document.getElementById('default-movies');
-
     let timeoutId;
 
     input.addEventListener('input', function () {
         const query = this.value.trim();
-
         clearTimeout(timeoutId);
 
         if (query.length === 0) {
             timeoutId = setTimeout(() => {
                 results.innerHTML = '';
+                results.style.display = 'none';
                 defaultMovies.style.display = 'block';
             }, 200);
             return;
@@ -65,58 +68,54 @@ document.addEventListener("DOMContentLoaded", function () {
         timeoutId = setTimeout(() => {
             fetch(`{% url 'search_movies' %}?q=` + encodeURIComponent(query))
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Ошибка сети');
-                    }
+                    if (!response.ok) throw new Error('Ошибка сети');
                     return response.json();
                 })
                 .then(data => {
                     results.innerHTML = '';
+                    results.style.display = 'flex';
 
                     if (data.length === 0) {
                         results.innerHTML = '<p>Фильмы не найдены</p>';
                         return;
                     }
 
-                    // Создаем таблицу
-                    const table = document.createElement('table');
-                    const tbody = document.createElement('tbody');
+                    results.classList.add('film-card-list');
 
                     data.forEach(movie => {
-                        const tr = document.createElement('tr');
+                        const card = document.createElement('div');
+                        card.className = 'film-card';
 
-                        const tdImage = document.createElement('td');
+                        const link = document.createElement('a');
+                        link.href = movie.url;
+
                         if (movie.poster) {
                             const img = document.createElement('img');
                             img.src = movie.poster;
                             img.alt = movie.title;
-                            img.width = 150;
-                            tdImage.appendChild(img);
+                            link.appendChild(img);
                         } else {
-                            tdImage.textContent = 'Постер не найден';
+                            const fallback = document.createElement('div');
+                            fallback.className = 'title';
+                            fallback.textContent = '(Постер не найден)';
+                            link.appendChild(fallback);
                         }
 
-                        const tdTitle = document.createElement('td');
-                        const link = document.createElement('a');
-                        link.href = movie.url;
-                        link.textContent = movie.title;
-                        tdTitle.appendChild(link);
+                        const titleDiv = document.createElement('div');
+                        titleDiv.className = 'title';
+                        titleDiv.textContent = movie.title;
+                        link.appendChild(titleDiv);
 
-                        tr.appendChild(tdImage);
-                        tr.appendChild(tdTitle);
-                        tbody.appendChild(tr);
+                        card.appendChild(link);
+                        results.appendChild(card);
                     });
-
-                    table.appendChild(tbody);
-                    results.appendChild(table);
                 })
                 .catch(error => {
                     console.error('Ошибка:', error);
                     results.innerHTML = '<p>Произошла ошибка при загрузке фильмов</p>';
                 });
-        }, 300); // задержка перед отправкой запроса
+        }, 300);
     });
 });
 </script>
-
 {% endblock %}
