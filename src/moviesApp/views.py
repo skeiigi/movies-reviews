@@ -116,6 +116,8 @@ def movies_admin(request):
         # Если запрос POST, создаем форму с данными из запроса
         form = MovieForm(request.POST, request.FILES)  # Добавляем request.FILES для загрузки изображений
         if form.is_valid():
+            movie = form.save(commit=False)
+            movie.removed = False
             # Если форма валидна, сохраняем данные и перенаправляем на страницу
             form.save()
             return render(request, "moviesApp/movies_admin.html", {'form': form, 'movies': movies_list})

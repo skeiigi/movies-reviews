@@ -1,0 +1,99 @@
+.page-container {
+  max-width: 1000px;
+  margin: 30px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 114, 255, 0.1);
+  color: #222;
+  font-family: 'Segoe UI', sans-serif; }
+  .page-container h1 {
+    font-size: 28px;
+    color: #0072ff;
+    margin-bottom: 20px;
+    text-align: center; }
+  .page-container a {
+    color: #00c6ff;
+    font-weight: 500; }
+    .page-container a:hover {
+      text-decoration: underline; }
+  .page-container table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px; }
+    .page-container table th {
+      background: #0072ff;
+      color: white;
+      padding: 12px;
+      text-align: left;
+      font-weight: normal; }
+    .page-container table td {
+      padding: 12px;
+      border-bottom: 1px solid #e0e0e0; }
+      .page-container table td img {
+        width: 80px;
+        height: auto;
+        border-radius: 4px; }
+    .page-container table tr:nth-child(even) {
+      background-color: #f0f7ff; }
+    .page-container table tr:hover {
+      background-color: #e8f3ff; }
+  .page-container .btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s ease; }
+  .page-container .btn-danger {
+    background: #ff4b4b;
+    color: white; }
+    .page-container .btn-danger:hover {
+      background: #e63b3b; }
+  .page-container .edit__button {
+    background: linear-gradient(to right, #00c6ff, #0072ff);
+    color: white; }
+    .page-container .edit__button:hover {
+      background: linear-gradient(to right, #009ecc, #005bcc); }
+
+.modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease; }
+  .modal.open {
+    visibility: visible;
+    opacity: 1; }
+  .modal .modal__main {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2); }
+    .modal .modal__main .modal__title {
+      margin-top: 0;
+      color: #0072ff;
+      font-size: 22px; }
+    .modal .modal__main .modal__close {
+      float: right;
+      border: none;
+      background: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #555; }
+
+@media (max-width: 768px) {
+  .page-container {
+    padding: 15px; }
+    .page-container table, .page-container th, .page-container td {
+      font-size: 14px; }
+    .page-container img {
+      width: 60px; } }
+
+/*# sourceMappingURL=my_reviews.css.map */

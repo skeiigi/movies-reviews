@@ -1,289 +1,295 @@
 {% extends "moviesApp/base.html" %}
+{% load static %}
+{% load sass_tags %}
 
 {% block title %}
     Мои статьи
 {% endblock %}
 
+{% block extra_head %}
+  <link rel="stylesheet" href="{% sass_src 'moviesApp/scss/my_reviews.scss' %}">
+{% endblock %}
 
 {% block content %}
-<h1>Статьи {{ user.username }}</h1>
-<a href="{% url 'reviews' %}">Все обсуждения</a>
+<div class="page-container">
+    <h1>Статьи {{ user.username }}</h1>
+    <a href="{% url 'reviews' %}">Все обсуждения</a>
 
-{% if reviews %}
-<table>
-  <thead>
-    <tr>
-      <th>Тема</th>
-      <th>Фильм</th>
-      <th>Дата написания</th>
-      <th>Последнее изменение</th>
-      <th>Контент</th>
-    </tr>
-  </thead>
-  <tbody>
+    {% if reviews %}
+    <table>
+    <thead>
+        <tr>
+        <th>Тема</th>
+        <th>Фильм</th>
+        <th>Дата написания</th>
+        <th>Последнее изменение</th>
+        <th>Контент</th>
+        </tr>
+    </thead>
+    <tbody>
 
-{% for rv in reviews %}
-    <tr data-id="{{ rv.id }}">
-        <td>{{rv.title}}</td>
+    {% for rv in reviews %}
+        <tr data-id="{{ rv.id }}">
+            <td>{{rv.title}}</td>
+            <td>
+            {% if rv.movie %}
+            {% if rv.movie.poster %}
+                <div style="display: flex; align-items: center;">
+                    <img src="{{ rv.movie.poster.url }}" alt="{{ rv.movie.title }}" style="width: 100px; height: auto; margin-right: 10px;">
+                    <span>{{ rv.movie.title }}</span>
+                </div>
+            {% else %}
+                <span>(Постер к фильму не найден)</span>
+            {% endif %}
+            {% else %}
+            <span>(Фильм не указан)</span>
+            {% endif %}
+        </td>
+        <td>{{rv.created_at}}</td>
+        <td>{{rv.changed_at}}</td>
+        <td>{{rv.content}}</td>
         <td>
-        {% if rv.movie %}
-          {% if rv.movie.poster %}
-              <div style="display: flex; align-items: center;">
-                <img src="{{ rv.movie.poster.url }}" alt="{{ rv.movie.title }}" style="width: 100px; height: auto; margin-right: 10px;">
-                <span>{{ rv.movie.title }}</span>
-              </div>
-          {% else %}
-            <span>(Постер к фильму не найден)</span>
-          {% endif %}
-        {% else %}
-          <span>(Фильм не указан)</span>
-        {% endif %}
-      </td>
-      <td>{{rv.created_at}}</td>
-      <td>{{rv.changed_at}}</td>
-      <td>{{rv.content}}</td>
-      <td>
-          <button class="edit__button"
-                  data-id="{{ rv.id }}">
-            Изменить
-          </button>
-      </td>
-      <td>
-          <button class="btn btn-danger delete__button" data-id="{{ rv.id }}" title="Удалить">
-              Удалить
-          </button>
-      </td>
-    </tr>
-{% endfor %}
+            <button class="edit__button"
+                    data-id="{{ rv.id }}">
+                Изменить
+            </button>
+        </td>
+        <td>
+            <button class="btn btn-danger delete__button" data-id="{{ rv.id }}" title="Удалить">
+                Удалить
+            </button>
+        </td>
+        </tr>
+    {% endfor %}
 
-  </tbody>
-</table>
+    </tbody>
+    </table>
 
-{% else %}
-<h1>Пока нет обсуждений...</h1>
-{% endif %}
+    {% else %}
+    <h1>Пока нет обсуждений...</h1>
+    {% endif %}
 
-<div class="modal">
-    <div class="modal__main">
-        <h2 class="modal__title">Редактирование статьи</h2>
-        <div class="modal__container"></div>
-        <button class="modal__close">&#10006;</button>
+    <div class="modal">
+        <div class="modal__main">
+            <h2 class="modal__title">Редактирование статьи</h2>
+            <div class="modal__container"></div>
+            <button class="modal__close">&#10006;</button>
+        </div>
     </div>
-</div>
 
-<script>
-    const deleteReviewUrl = "{% url 'delete_review' review_id=999999999 %}";
+    <script>
+        const deleteReviewUrl = "{% url 'delete_review' review_id=999999999 %}";
 
-    console.log('deleteReviewUrl:', deleteReviewUrl);
+        console.log('deleteReviewUrl:', deleteReviewUrl);
 
-    const buttonElems = document.querySelectorAll('.edit__button');
-    const modalElem = document.querySelector('.modal');
-    const modalContainer = modalElem.querySelector('.modal__container');
+        const buttonElems = document.querySelectorAll('.edit__button');
+        const modalElem = document.querySelector('.modal');
+        const modalContainer = modalElem.querySelector('.modal__container');
 
-    // Изначально скрываем модальное окно
-    modalElem.style.cssText = `
-        display: flex;
-        visibility: hidden;
-        opacity: 0;
-        transition: opacity 300ms ease-in-out;
-    `;
+        // Изначально скрываем модальное окно
+        modalElem.style.cssText = `
+            display: flex;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 300ms ease-in-out;
+        `;
 
-    // Закрытие модального окна
-    const closeModal = (event) => {
-        const target = event.target;
-        if (target.closest('.modal__close')) {
-            modalElem.style.opacity = 0;
-            setTimeout(() => {
-                modalElem.style.visibility = 'hidden';
-                modalContainer.innerHTML = '';
-            }, 300);
-        }
-    };
+        // Закрытие модального окна
+        const closeModal = (event) => {
+            const target = event.target;
+            if (target.closest('.modal__close')) {
+                modalElem.style.opacity = 0;
+                setTimeout(() => {
+                    modalElem.style.visibility = 'hidden';
+                    modalContainer.innerHTML = '';
+                }, 300);
+            }
+        };
 
-    // Получение CSRF-токена из кук
-    function getCSRFToken() {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            for (let cookie of document.cookie.split(';')) {
-                cookie = cookie.trim();
-                if (cookie.startsWith('csrftoken=')) {
-                    cookieValue = decodeURIComponent(cookie.substring('csrftoken='.length));
-                    break;
+        // Получение CSRF-токена из кук
+        function getCSRFToken() {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                for (let cookie of document.cookie.split(';')) {
+                    cookie = cookie.trim();
+                    if (cookie.startsWith('csrftoken=')) {
+                        cookieValue = decodeURIComponent(cookie.substring('csrftoken='.length));
+                        break;
+                    }
                 }
             }
+            return cookieValue;
         }
-        return cookieValue;
-    }
 
-    // Функция удаления статьи
-    const deleteReview = (reviewId) => {
-        const confirmed = confirm('Вы уверены, что хотите удалить статью?');
-        if (!confirmed) return;
+        // Функция удаления статьи
+        const deleteReview = (reviewId) => {
+            const confirmed = confirm('Вы уверены, что хотите удалить статью?');
+            if (!confirmed) return;
 
-        // Формируем правильный URL
-        const url = "{% url 'delete_review' review_id=999999999 %}".replace("999999999", reviewId);
+            // Формируем правильный URL
+            const url = "{% url 'delete_review' review_id=999999999 %}".replace("999999999", reviewId);
 
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCSRFToken(),
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(response => {
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                const contentType = response.headers.get("content-type");
-                if (contentType && contentType.includes("application/json")) {
-                    return response.json();
-                } else {
-                    throw new Error("Получен HTML вместо JSON. Возможно, вы не авторизованы.");
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                    'Content-Type': 'application/json'
                 }
             })
-            .then(data => {
-                if (data.success) {
-                    const row = document.querySelector(`tr[data-id="${reviewId}"]`);
-                    if (row) row.remove();
-                    alert('✅ Статья успешно удалена.');
-                } else {
-                    alert(`❌ Ошибка: ${data.error || 'Неизвестная ошибка'}`);
-                }
-            })
-            .catch(err => {
-                console.error('Ошибка:', err);
-                alert(`⚠️ Ошибка: ${err.message}`);
-            });
-    };
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                    const contentType = response.headers.get("content-type");
+                    if (contentType && contentType.includes("application/json")) {
+                        return response.json();
+                    } else {
+                        throw new Error("Получен HTML вместо JSON. Возможно, вы не авторизованы.");
+                    }
+                })
+                .then(data => {
+                    if (data.success) {
+                        const row = document.querySelector(`tr[data-id="${reviewId}"]`);
+                        if (row) row.remove();
+                        alert('✅ Статья успешно удалена.');
+                    } else {
+                        alert(`❌ Ошибка: ${data.error || 'Неизвестная ошибка'}`);
+                    }
+                })
+                .catch(err => {
+                    console.error('Ошибка:', err);
+                    alert(`⚠️ Ошибка: ${err.message}`);
+                });
+        };
 
-    // Навешиваем обработчики на кнопки удаления
-    document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('.delete__button').forEach(button => {
-            button.addEventListener('click', (e) => {
-                e.preventDefault();
-                const reviewId = button.dataset.id;
-                deleteReview(reviewId);
+        // Навешиваем обработчики на кнопки удаления
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.delete__button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const reviewId = button.dataset.id;
+                    deleteReview(reviewId);
+                });
             });
         });
-    });
 
-    // Открытие и загрузка формы в модальное окно
-    const openModal = (reviewId) => {
-        fetch(`/review/edit/${reviewId}/`)
-            .then(response => response.text())
-            .then(html => {
-                modalContainer.innerHTML = `
-                    <form method="POST" id="edit-review-form">
-                        ${html}
-                    </form>
-                `;
-                modalElem.style.visibility = 'visible';
-                modalElem.style.opacity = 1;
+        // Открытие и загрузка формы в модальное окно
+        const openModal = (reviewId) => {
+            fetch(`/review/edit/${reviewId}/`)
+                .then(response => response.text())
+                .then(html => {
+                    modalContainer.innerHTML = `
+                        <form method="POST" id="edit-review-form">
+                            ${html}
+                        </form>
+                    `;
+                    modalElem.style.visibility = 'visible';
+                    modalElem.style.opacity = 1;
 
-                // Обработчик отправки формы
-                // Обработчик отправки формы
-                const editForm = document.querySelector('#edit-review-form');
+                    // Обработчик отправки формы
+                    // Обработчик отправки формы
+                    const editForm = document.querySelector('#edit-review-form');
 
-                // Получаем все поля формы
-                const formFields = {};
-                const initialFormValues = {};
+                    // Получаем все поля формы
+                    const formFields = {};
+                    const initialFormValues = {};
 
-                Array.from(editForm.elements).forEach(element => {
-                    if (element.name) {
-                        initialFormValues[element.name] = element.value;
-                        formFields[element.name] = element;
-                    }
-                });
-
-                editForm.addEventListener('submit', function (e) {
-                    e.preventDefault();
-
-                    // Собираем текущие значения
-                    const currentValues = {};
                     Array.from(editForm.elements).forEach(element => {
                         if (element.name) {
-                            currentValues[element.name] = element.value;
+                            initialFormValues[element.name] = element.value;
+                            formFields[element.name] = element;
                         }
                     });
 
-                    // Проверяем, были ли изменения
-                    let isChanged = false;
-                    for (let key in currentValues) {
-                        if (currentValues[key] !== initialFormValues[key]) {
-                            isChanged = true;
-                            break;
-                        }
-                    }
+                    editForm.addEventListener('submit', function (e) {
+                        e.preventDefault();
 
-                    if (!isChanged) {
-                        alert('❗ Нет изменений для сохранения.');
-                        return;
-                    }
-
-                    // Если есть изменения — отправляем форму через fetch
-                    const formData = new FormData(editForm);
-
-                    fetch(`/review/edit/${reviewId}/`, {
-                        method: 'POST',
-                        body: formData
-                    })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                if (data.message === 'Изменений не было') {
-                                    alert('❗ Нет изменений для сохранения.');
-                                } else {
-                                    alert('✅ Данные успешно обновлены!');
-                                    updateTableRow(reviewId, data.review);
-                                    closeModal({ target: modalElem.querySelector('.modal__close') });
-                                }
-                            } else {
-                                alert('❌ Ошибка при сохранении данных.');
+                        // Собираем текущие значения
+                        const currentValues = {};
+                        Array.from(editForm.elements).forEach(element => {
+                            if (element.name) {
+                                currentValues[element.name] = element.value;
                             }
-                        })
-                        .catch(err => {
-                            console.error(err);
-                            alert('⚠️ Произошла ошибка при отправке запроса.');
                         });
+
+                        // Проверяем, были ли изменения
+                        let isChanged = false;
+                        for (let key in currentValues) {
+                            if (currentValues[key] !== initialFormValues[key]) {
+                                isChanged = true;
+                                break;
+                            }
+                        }
+
+                        if (!isChanged) {
+                            alert('❗ Нет изменений для сохранения.');
+                            return;
+                        }
+
+                        // Если есть изменения — отправляем форму через fetch
+                        const formData = new FormData(editForm);
+
+                        fetch(`/review/edit/${reviewId}/`, {
+                            method: 'POST',
+                            body: formData
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    if (data.message === 'Изменений не было') {
+                                        alert('❗ Нет изменений для сохранения.');
+                                    } else {
+                                        alert('✅ Данные успешно обновлены!');
+                                        updateTableRow(reviewId, data.review);
+                                        closeModal({ target: modalElem.querySelector('.modal__close') });
+                                    }
+                                } else {
+                                    alert('❌ Ошибка при сохранении данных.');
+                                }
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                alert('⚠️ Произошла ошибка при отправке запроса.');
+                            });
+                    });
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Не удалось загрузить форму.');
                 });
-            })
-            .catch(err => {
-                console.error(err);
-                alert('Не удалось загрузить форму.');
+        };
+
+        // Функция для обновления строки в таблице
+        const updateTableRow = (reviewId, reviewData) => {
+            const row = document.querySelector(`tr[data-id="${reviewId}"]`);
+            if (!row) return;
+
+            // Предположим, что у каждой строки есть data-id
+            row.setAttribute('data-id', reviewData.id);
+
+            const cells = row.querySelectorAll('td');
+
+            // Обновляем ячейки: тема, фильм, дата создания, последнее изменение, контент
+            cells[0].textContent = reviewData.title;
+            cells[1].innerHTML = `
+                <div style="display: flex; align-items: center;">
+                    <img src="${reviewData.poster_url}" alt="${reviewData.movie_title}" style="width: 100px; height: auto; margin-right: 10px;">
+                    <span>${reviewData.movie_title}</span>
+                </div>
+            `;
+            cells[2].textContent = reviewData.created_at;
+            cells[3].textContent = reviewData.changed_at;
+            cells[4].textContent = reviewData.content;
+        };
+
+        // Навешиваем обработчик на каждую кнопку "Изменить"
+        buttonElems.forEach(button => {
+            button.addEventListener('click', () => {
+                const reviewId = button.dataset.id;
+                openModal(reviewId);
             });
-    };
-
-    // Функция для обновления строки в таблице
-    const updateTableRow = (reviewId, reviewData) => {
-        const row = document.querySelector(`tr[data-id="${reviewId}"]`);
-        if (!row) return;
-
-        // Предположим, что у каждой строки есть data-id
-        row.setAttribute('data-id', reviewData.id);
-
-        const cells = row.querySelectorAll('td');
-
-        // Обновляем ячейки: тема, фильм, дата создания, последнее изменение, контент
-        cells[0].textContent = reviewData.title;
-        cells[1].innerHTML = `
-            <div style="display: flex; align-items: center;">
-                <img src="${reviewData.poster_url}" alt="${reviewData.movie_title}" style="width: 100px; height: auto; margin-right: 10px;">
-                <span>${reviewData.movie_title}</span>
-            </div>
-        `;
-        cells[2].textContent = reviewData.created_at;
-        cells[3].textContent = reviewData.changed_at;
-        cells[4].textContent = reviewData.content;
-    };
-
-    // Навешиваем обработчик на каждую кнопку "Изменить"
-    buttonElems.forEach(button => {
-        button.addEventListener('click', () => {
-            const reviewId = button.dataset.id;
-            openModal(reviewId);
         });
-    });
 
-    // Закрытие по клику на кнопку закрытия
-    modalElem.addEventListener('click', closeModal);
-</script>
-
+        // Закрытие по клику на кнопку закрытия
+        modalElem.addEventListener('click', closeModal);
+    </script>
+</div>
 {% endblock %}
