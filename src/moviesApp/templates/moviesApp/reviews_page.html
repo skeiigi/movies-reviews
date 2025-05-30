@@ -14,7 +14,8 @@
 
   {% if user.is_authenticated %}
     <a href="{% url 'my_reviews' %}">Мои обсуждения</a>
-    <div style="text-align: center; margin: 30px 0;">
+
+    <div class="discussion-add-form">
       <h3>Добавить новое обсуждение</h3>
       <form method="post">
         {% csrf_token %}

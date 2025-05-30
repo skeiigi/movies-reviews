@@ -43,79 +43,67 @@
     {% endif %}
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const input = document.getElementById('search-input');
-    const results = document.getElementById('search-results');
-    const defaultMovies = document.getElementById('default-movies');
+  $(document).ready(function () {
+    const input = $('#search-input');
+    const results = $('#search-results');
+    const defaultMovies = $('#default-movies');
     let timeoutId;
 
-    input.addEventListener('input', function () {
-        const query = this.value.trim();
-        clearTimeout(timeoutId);
+    input.on('input', function () {
+      const query = $(this).val().trim();
+      clearTimeout(timeoutId);
 
-        if (query.length === 0) {
-            timeoutId = setTimeout(() => {
-                results.innerHTML = '';
-                results.style.display = 'none';
-                defaultMovies.style.display = 'block';
-            }, 200);
-            return;
-        }
-
-        defaultMovies.style.display = 'none';
-
+      if (!query) {
         timeoutId = setTimeout(() => {
-            fetch(`{% url 'search_movies' %}?q=` + encodeURIComponent(query))
-                .then(response => {
-                    if (!response.ok) throw new Error('Ошибка сети');
-                    return response.json();
-                })
-                .then(data => {
-                    results.innerHTML = '';
-                    results.style.display = 'flex';
+          results.empty().hide();
+          defaultMovies.show();
+        }, 200);
+        return;
+      }
 
-                    if (data.length === 0) {
-                        results.innerHTML = '<p>Фильмы не найдены</p>';
-                        return;
-                    }
+      defaultMovies.hide();
 
-                    results.classList.add('film-card-list');
+      timeoutId = setTimeout(() => {
+        const request = $.ajax({
+          url: '{% url "search_movies" %}',
+          method: 'GET',
+          data: { q: query },
+          dataType: 'json'
+        });
 
-                    data.forEach(movie => {
-                        const card = document.createElement('div');
-                        card.className = 'film-card';
+        request.done(function (data) {
+          results.empty().show();
 
-                        const link = document.createElement('a');
-                        link.href = movie.url;
+          if (!data.length) {
+            results.html('<p>Фильмы не найдены</p>');
+            return;
+          }
 
-                        if (movie.poster) {
-                            const img = document.createElement('img');
-                            img.src = movie.poster;
-                            img.alt = movie.title;
-                            link.appendChild(img);
-                        } else {
-                            const fallback = document.createElement('div');
-                            fallback.className = 'title';
-                            fallback.textContent = '(Постер не найден)';
-                            link.appendChild(fallback);
-                        }
+          const html = data.map(movie => `
+            <div class="film-card">
+              <a href="${movie.url}">
+                ${movie.poster ? `<img src="${movie.poster}" alt="${movie.title}">` : '<div>Постер не найден</div>'}
+                <div class="title">${movie.title}</div>
+              </a>
+            </div>
+          `).join('');
 
-                        const titleDiv = document.createElement('div');
-                        titleDiv.className = 'title';
-                        titleDiv.textContent = movie.title;
-                        link.appendChild(titleDiv);
+          results.html(html);
+        });
 
-                        card.appendChild(link);
-                        results.appendChild(card);
-                    });
-                })
-                .catch(error => {
-                    console.error('Ошибка:', error);
-                    results.innerHTML = '<p>Произошла ошибка при загрузке фильмов</p>';
-                });
-        }, 300);
+        request.fail(function (xhr, status, error) {
+          console.error('Ошибка:', status, error);
+          results.html('<p>Произошла ошибка при загрузке фильмов</p>');
+        });
+
+        request.always(function () {
+          console.log('Запрос завершён');
+        });
+      }, 300);
     });
-});
+  });
 </script>
+
 {% endblock %}

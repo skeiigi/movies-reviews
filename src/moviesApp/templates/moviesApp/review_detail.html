@@ -41,70 +41,76 @@
   <h3>Комментарии</h3>
 
   {% for comment in comments %}
-    <div class="comment">
-      {% if comment.removed %}
-        <em>Комментарий удалён.</em>
-      {% else %}
-        <strong><a href="{% url 'user_profile' comment.user.id %}">{{ comment.user.username }}</a></strong>:
-        {{ comment.content }}
-        <div class="date">Добавлено: {{ comment.created_at|date:"d.m.Y H:i" }},
-          изменено: {{ comment.updated_at|date:"d.m.Y H:i" }}</div>
+  <!-- Блок комментария, добавляем уникальный id -->
+  <div class="comment" id="comment-{{ comment.id }}">
+    {% if comment.removed %}
+      <em>Комментарий удалён.</em>
+    {% else %}
+      <!-- Имя пользователя и текст комментария -->
+      <strong><a href="{% url 'user_profile' comment.user.id %}">{{ comment.user.username }}</a></strong>:
+      {{ comment.content }}
+      <div class="date">Добавлено: {{ comment.created_at|date:"d.m.Y H:i" }},
+        изменено: {{ comment.updated_at|date:"d.m.Y H:i" }}</div>
 
-        {% if user == comment.user %}
-          <form method="post" action="{% url 'edit_comment' comment.id %}" style="display: inline;">
-            {% csrf_token %}
-            <button type="submit">Редактировать</button>
-          </form>
-          |
-          <form method="post" action="{% url 'delete_comment' comment.id %}" style="display: inline;">
-            {% csrf_token %}
-            <button type="submit" onclick="return confirm('Удалить комментарий?')">Удалить</button>
-          </form>
-        {% endif %}
-      {% endif %}
-
-      {% if comment.filtered_replies %}
-        <button class="toggle-replies" data-comment-id="{{ comment.id }}" style="margin-top: 5px;">Показать ответы</button>
-      {% endif %}
-
-      <div id="replies-{{ comment.id }}" style="display: none; margin-top: 10px;">
-        {% for reply in comment.filtered_replies %}
-          <div class="comment" style="margin-left: 20px;">
-            {% if reply.removed %}
-              <em>Комментарий удалён.</em>
-            {% else %}
-              <strong><a href="{% url 'user_profile' reply.user.id %}">{{ reply.user.username }}</a></strong>:
-              {{ reply.content }}
-              <div class="date">Добавлено: {{ reply.created_at|date:"d.m.Y H:i" }},
-                изменено: {{ reply.updated_at|date:"d.m.Y H:i" }}</div>
-
-              {% if user == reply.user %}
-                <form method="post" action="{% url 'edit_comment' reply.id %}" style="display: inline;">
-                  {% csrf_token %}
-                  <button type="submit">Редактировать</button>
-                </form>
-                |
-                <form method="post" action="{% url 'delete_comment' reply.id %}" style="display: inline;">
-                  {% csrf_token %}
-                  <button type="submit" onclick="return confirm('Удалить ответ?')">Удалить</button>
-                </form>
-              {% endif %}
-            {% endif %}
-          </div>
-        {% endfor %}
-      </div>
-
-      {% if user.is_authenticated and not comment.removed %}
-        <form method="post" action="{% url 'reply_comment' review.id comment.id %}" class="comment-form">
+      {% if user == comment.user %}
+        <!-- Кнопки редактирования и удаления -->
+        <form method="post" action="{% url 'edit_comment' comment.id %}" style="display: inline;">
           {% csrf_token %}
-          {{ form.as_p }}
-          <button type="submit">Ответить</button>
+          <button type="submit">Редактировать</button>
+        </form> |
+        <form method="post" action="{% url 'delete_comment' comment.id %}" style="display: inline;">
+          {% csrf_token %}
+          <button type="submit" onclick="return confirm('Удалить комментарий?')">Удалить</button>
         </form>
       {% endif %}
+    {% endif %}
+
+    <!-- Кнопка показа/скрытия ответов -->
+    {% if comment.filtered_replies %}
+      <button class="toggle-replies" data-comment-id="{{ comment.id }}" style="margin-top: 5px;">Показать ответы</button>
+    {% endif %}
+
+    <!-- Блок с ответами, скрыт по умолчанию -->
+    <div id="replies-{{ comment.id }}" style="display: none; margin-top: 10px;">
+      {% for reply in comment.filtered_replies %}
+        <!-- Каждый ответ тоже получает id для прокрутки -->
+        <div class="comment" id="comment-{{ reply.id }}" style="margin-left: 20px;">
+          {% if reply.removed %}
+            <em>Комментарий удалён.</em>
+          {% else %}
+            <strong><a href="{% url 'user_profile' reply.user.id %}">{{ reply.user.username }}</a></strong>:
+            {{ reply.content }}
+            <div class="date">Добавлено: {{ reply.created_at|date:"d.m.Y H:i" }},
+              изменено: {{ reply.updated_at|date:"d.m.Y H:i" }}</div>
+
+            {% if user == reply.user %}
+              <form method="post" action="{% url 'edit_comment' reply.id %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit">Редактировать</button>
+              </form> |
+              <form method="post" action="{% url 'delete_comment' reply.id %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" onclick="return confirm('Удалить ответ?')">Удалить</button>
+              </form>
+            {% endif %}
+          {% endif %}
+        </div>
+      {% endfor %}
     </div>
-  {% empty %}
-    <p>Комментариев пока нет.</p>
-  {% endfor %}
+
+    <!-- Форма ответа -->
+    {% if user.is_authenticated and not comment.removed %}
+      <form method="post" action="{% url 'reply_comment' review.id comment.id %}" class="comment-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Ответить</button>
+      </form>
+    {% endif %}
+  </div>
+{% empty %}
+  <p>Комментариев пока нет.</p>
+{% endfor %}
+
 
   <hr>
   <h4>Оставить комментарий:</h4>

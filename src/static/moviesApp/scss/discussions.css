@@ -1,3 +1,4 @@
+@charset "UTF-8";
 .page-container {
   max-width: 1100px;
   margin: 30px auto;
@@ -59,6 +60,77 @@
     .review-card a.film-link:hover {
       text-decoration: underline; }
 
+/* Новые стили для формы добавления обсуждения */
+.discussion-add-form {
+  max-width: 600px;
+  margin: 0 auto 40px; }
+  .discussion-add-form h3 {
+    color: #0072ff;
+    margin-bottom: 15px; }
+  .discussion-add-form form {
+    background: #f5faff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 114, 255, 0.1); }
+    .discussion-add-form form input[type="text"],
+    .discussion-add-form form textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #cce3ff;
+      border-radius: 5px;
+      font-size: 1rem;
+      color: #222;
+      font-family: inherit;
+      transition: border-color 0.3s ease; }
+      .discussion-add-form form input[type="text"]:focus,
+      .discussion-add-form form textarea:focus {
+        border-color: #0072ff;
+        outline: none; }
+    .discussion-add-form form button {
+      background-color: #0072ff;
+      color: white;
+      border: none;
+      padding: 10px 25px;
+      border-radius: 5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease; }
+      .discussion-add-form form button:hover {
+        background-color: #005bcc; }
+
+/* Стили для форм комментариев на странице обсуждения */
+.comment-form {
+  margin-top: 10px;
+  max-width: 100%; }
+  .comment-form input[type="text"],
+  .comment-form textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid white;
+    border-radius: 3.33333px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: #222;
+    transition: border-color 0.3s ease; }
+    .comment-form input[type="text"]:focus,
+    .comment-form textarea:focus {
+      border-color: #00c6ff;
+      outline: none; }
+  .comment-form button {
+    background-color: #99c7ff;
+    color: #222;
+    padding: 6px 15px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: none;
+    font-weight: 600;
+    transition: background-color 0.25s ease; }
+    .comment-form button:hover {
+      background-color: #66aaff; }
+
 @media (max-width: 768px) {
   .film-card-list {
     justify-content: center; }
@@ -68,5 +140,12 @@
     padding: 10px; }
   .section-title {
     font-size: 20px; } }
+
+.highlighted-comment {
+  background-color: #fff3cd;
+  border-left: 4px solid #ffc107;
+  padding: 10px;
+  border-radius: 6px;
+  transition: background-color 1s ease; }
 
 /*# sourceMappingURL=discussions.css.map */

@@ -1,10 +1,27 @@
 {% if notifications %}
-  <ul style="list-style: none; padding: 10px;">
+  <!-- Кнопка очистки -->
+  <div style="text-align: right; margin-bottom: 10px;">
+    <button id="clear-notifications" class="btn btn-sm btn-danger">Очистить все</button>
+  </div>
+
+  <!-- Список уведомлений -->
+  <ul style="list-style: none; padding: 0; margin: 0;">
     {% for n in notifications %}
-      <li style="margin-bottom: 10px;">
-        💬 <strong>{{ n.comment.user.username }}</strong>: {{ n.comment.content|truncatechars:100 }}
-        <br>
-        <small>{{ n.created_at|date:"d.m.Y H:i" }}</small>
+      <li class="notification-item">
+        <!-- Верхняя строка: кто написал и короткое сообщение -->
+        <div class="notification-text">
+          💬 <strong>{{ n.comment.user.username }}</strong>: {{ n.comment.content|truncatewords:10 }}
+        </div>
+
+        <!-- Дата -->
+        <div class="notification-date">
+          {{ n.created_at|date:"d.m.Y H:i" }}
+        </div>
+
+        <!-- Ссылка на комментарий -->
+        <div class="notification-link">
+          <a href="{% url 'review_detail' n.comment.review.id %}#comment-{{ n.comment.id }}" class="go-link">Перейти к комментарию</a>
+        </div>
       </li>
     {% endfor %}
   </ul>

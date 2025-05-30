@@ -16,3 +16,21 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
   });
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Получаем ID якоря из URL, если он есть
+  const hash = window.location.hash;
+  if (hash && hash.startsWith("#comment-")) {
+    const comment = document.querySelector(hash);
+    if (comment) {
+      // Прокручиваем к нужному комментарию и подсвечиваем
+      comment.scrollIntoView({ behavior: "smooth", block: "center" });
+      comment.classList.add("highlighted-comment");
+
+      // Убираем подсветку через 3 секунды
+      setTimeout(() => {
+        comment.classList.remove("highlighted-comment");
+      }, 3000);
+    }
+  }
+});

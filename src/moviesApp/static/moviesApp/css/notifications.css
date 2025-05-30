@@ -16,23 +16,6 @@
     color: #333;
 }
 
-.notification-dropdown ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.notification-dropdown ul li {
-    padding: 8px 10px;
-    border-bottom: 1px solid #eee;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.notification-dropdown ul li:hover {
-    background-color: #f0f0f0;
-}
-
 #notification-dropdown p {
   margin: 10px;
 }
@@ -63,3 +46,61 @@
     color: #999;
     font-style: italic;
 }
+
+.notification-item {
+  background: linear-gradient(135deg, #00c9ff 0%, #92fe9d 100%);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  color: #002244;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.notification-item:hover {
+  transform: translateY(-2px);
+}
+
+.notification-text {
+  font-weight: 500;
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+
+.notification-date {
+  font-size: 13px;
+  color: #001933;
+  margin-bottom: 4px;
+}
+
+.notification-link .go-link {
+  background: #fff;
+  color: #0077cc;
+  padding: 4px 8px;
+  font-size: 13px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.3s;
+  cursor: pointer;
+}
+
+.notification-link .go-link:hover {
+  background: #e6f2ff;
+}
+
+#clear-notifications {
+  display: inline-block;
+  padding: 6px 12px;
+  background-color: #dc3545;
+  border-radius: 6px;
+  color: white;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#clear-notifications:hover {
+  background-color: #b02a37;
+}
+

@@ -475,3 +475,8 @@ def notifications_view(request):
 
     html = render_to_string("moviesApp/notifications_list.html", {"notifications": notifications})
     return HttpResponse(html)
+def clear_notifications(request):
+    if request.method == "POST":
+        Notification.objects.filter(recipient=request.user).update(removed=True)
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False, 'error': 'Неверный метод'}, status=405)
